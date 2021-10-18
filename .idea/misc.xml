@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="../../../../layout/custom_preview.xml" value="0.26666666666666666" />
+        <entry key="app/src/main/res/layout/activity_binding.xml" value="0.18177083333333333" />
+        <entry key="app/src/main/res/layout/activity_header_and_foot.xml" value="0.21458333333333332" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.2515625" />
+        <entry key="app/src/main/res/layout/activity_multi_type.xml" value="0.2957427536231884" />
+        <entry key="app/src/main/res/layout/activity_single_type.xml" value="0.21041666666666667" />
+        <entry key="app/src/main/res/layout/item.xml" value="0.2957427536231884" />
+        <entry key="app/src/main/res/layout/item2.xml" value="0.2515625" />
+        <entry key="app/src/main/res/layout/item_binding.xml" value="0.18177083333333333" />
+        <entry key="app/src/main/res/layout/item_multi_type1.xml" value="0.2957427536231884" />
+        <entry key="app/src/main/res/layout/item_multi_type2.xml" value="0.2957427536231884" />
+        <entry key="app/src/main/res/layout/item_multi_type3.xml" value="0.2957427536231884" />
+        <entry key="app/src/main/res/layout/item_multi_type4.xml" value="0.2957427536231884" />
+        <entry key="app/src/main/res/layout/item_single_type.xml" value="0.21041666666666667" />
+        <entry key="scrollview/src/main/res/layout/item.xml" value="0.30480072463768115" />
+      </map>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/build/classes" />
+  </component>
+  <component name="ProjectType">
+    <option name="id" value="Android" />
+  </component>
+</project>
