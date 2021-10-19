@@ -1,15 +1,11 @@
 package com.satis.example
 
 import android.content.Intent
-import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.databinding.DataBindingUtil
-import androidx.recyclerview.widget.RecyclerView
 import com.satis.example.databinding.ActivityMainBinding
-import com.satis.scrollview.BR
-import com.satis.scrollview.recyclerview.DividerItemDecoration
-import com.satis.scrollview.satis
+import com.satis.sliver.satis
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

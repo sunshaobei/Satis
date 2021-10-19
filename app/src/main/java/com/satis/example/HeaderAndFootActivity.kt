@@ -6,8 +6,8 @@ import android.os.Bundle
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
-import com.satis.scrollview.recyclerview.wrapper.LoadMoreState
-import com.satis.scrollview.satis
+import com.satis.sliver.recyclerview.wrapper.LoadMoreState
+import com.satis.sliver.satis
 import java.util.*
 import kotlin.collections.ArrayList
 

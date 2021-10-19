@@ -11,4 +11,4 @@ dependencyResolutionManagement {
 }
 rootProject.name = "Satis"
 include ':app'
-include ':scrollview'
+include ':sliver'

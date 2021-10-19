@@ -2,10 +2,9 @@ package com.satis.example
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
-import com.satis.scrollview.satis
+import com.satis.sliver.satis
 
 class SingleTypeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
