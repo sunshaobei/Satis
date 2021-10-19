@@ -1,10 +1,14 @@
 package com.satis.example
 
 import android.content.Intent
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.databinding.DataBindingUtil
 import com.satis.example.databinding.ActivityMainBinding
+import com.satis.example.overscroll.OverScrollActivity
+import com.satis.example.sliver.SliverActivity
+import com.satis.sliver.recyclerview.DividerItemDecoration
 import com.satis.sliver.satis
 
 class MainActivity : AppCompatActivity() {
@@ -12,7 +16,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         val binding =
             DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
-        val list = arrayListOf<String>("Single Type","Multi Type","Header Foot Type","Binding")
+        val list = arrayListOf<String>("SLIVER","OVERSCROLL")
 
         binding.rv.satis(list) {
             singleTypeItem<String>(R.layout.item){i,p,h->
@@ -21,25 +25,24 @@ class MainActivity : AppCompatActivity() {
             itemClick = { _,_,position->
                itemClick(list[position])
             }
+            divider = {
+                orientation = DividerItemDecoration.HORIZONTAL_LIST
+                size = 10
+                paddingLeft = 20
+                color = Color.RED
+                paddingRight = 20
+            }
         }
     }
 
    private fun itemClick(text:String){
         when (text){
-            "Single Type"->{
-                val intent = Intent( this@MainActivity,SingleTypeActivity::class.java)
+            "SLIVER"->{
+                val intent = Intent( this@MainActivity, SliverActivity::class.java)
                 startActivity(intent)
             }
-            "Multi Type"->{
-                val intent = Intent( this@MainActivity,MultiTypeActivity::class.java)
-                startActivity(intent)
-            }
-            "Header Foot Type"->{
-                val intent = Intent( this@MainActivity,HeaderAndFootActivity::class.java)
-                startActivity(intent)
-            }
-            "Binding" ->{
-                val intent = Intent( this@MainActivity,BindingActivity::class.java)
+            "OVERSCROLL"->{
+                val intent = Intent( this@MainActivity, OverScrollActivity::class.java)
                 startActivity(intent)
             }
         }

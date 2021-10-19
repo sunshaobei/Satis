@@ -11,11 +11,15 @@
         android:textColor="@color/white"
         android:id="@+id/tv"
         android:gravity="center"
-        android:layout_width="80dp"
+        android:layout_width="wrap_content"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
         android:layout_margin="10dp"
         android:elevation="6dp"
         android:text="按钮"
-        android:layout_height="30dp"/>
+        android:layout_height="wrap_content"/>
 
 
 </LinearLayout>

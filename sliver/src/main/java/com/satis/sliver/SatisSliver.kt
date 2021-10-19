@@ -7,13 +7,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.satis.sliver.item.ListTypeBindingItem
 import com.satis.sliver.item.ListTypeItem
+import com.satis.sliver.recyclerview.DividerItemDecoration
 import com.satis.sliver.recyclerview.ViewHolder
 import com.satis.sliver.recyclerview.wrapper.LoadMoreState
 
 class SatisSliver(val recyclerView: RecyclerView, datas: List<Any>) {
     private var adapter = SatisAdapter(recyclerView.context, datas)
     var layoutManager: RecyclerView.LayoutManager? = null
-    var divider: RecyclerView.ItemDecoration? = null
+    var divider: (DividerItemDecoration.()->Unit) ? = null
     var header: View? = null
     set(value) {
         adapter.addHeaderView(value)
@@ -200,7 +201,7 @@ fun RecyclerView.satis(datas: List<Any>, block: SatisSliver.() -> Unit):SatisSli
     this.layoutManager = sliver.layoutManager ?: layoutManager ?: LinearLayoutManager(this.context)
     //添加分割线
     sliver.divider?.let {
-        addItemDecoration(it)
+        addItemDecoration(DividerItemDecoration(this.context).apply(it))
     }
     adapter = sliver.getAdapter()
     return sliver

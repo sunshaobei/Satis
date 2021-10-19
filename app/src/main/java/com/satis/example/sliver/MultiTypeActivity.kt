@@ -1,8 +1,9 @@
-package com.satis.example
+package com.satis.example.sliver
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.recyclerview.widget.RecyclerView
+import com.satis.example.R
 import com.satis.example.databinding.ItemMultiType4Binding
 import com.satis.sliver.satis
 
@@ -41,7 +42,7 @@ class MultiTypeActivity : AppCompatActivity() {
             multiTypeItems<String>(R.layout.item_multi_type3) { i, p, h ->
                 h.setText(R.id.tv, "type3 -$p")
             }
-            multiTypeItemsBinding<String,ItemMultiType4Binding>(R.layout.item_multi_type4) { i, p,b ->
+            multiTypeItemsBinding<String,ItemMultiType4Binding>(R.layout.item_multi_type4) { i, p, b ->
                 b.text  = "type4 -$p"
             }
         }

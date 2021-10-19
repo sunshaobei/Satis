@@ -1,9 +1,10 @@
-package com.satis.example
+package com.satis.example.sliver
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import com.satis.example.R
 import com.satis.sliver.satis
 
 class SingleTypeActivity : AppCompatActivity() {

@@ -10,16 +10,22 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Satis">
         <activity
-            android:name=".BindingActivity"
+            android:name=".overscroll.OverScrollActivity"
+            android:exported="true" />
+        <activity
+            android:name=".sliver.SliverActivity"
+            android:exported="true" />
+        <activity
+            android:name=".sliver.BindingActivity"
             android:exported="false" />
         <activity
-            android:name=".HeaderAndFootActivity"
+            android:name=".sliver.HeaderAndFootActivity"
             android:exported="false" />
         <activity
-            android:name=".MultiTypeActivity"
+            android:name=".sliver.MultiTypeActivity"
             android:exported="false" />
         <activity
-            android:name=".SingleTypeActivity"
+            android:name=".sliver.SingleTypeActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"

@@ -1,4 +1,4 @@
-package com.satis.example
+package com.satis.example.sliver
 
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import com.satis.example.R
 import com.satis.sliver.recyclerview.wrapper.LoadMoreState
 import com.satis.sliver.satis
 import java.util.*
@@ -23,7 +24,7 @@ class HeaderAndFootActivity : AppCompatActivity() {
         val rv = findViewById<RecyclerView>(R.id.rv)
 
         rv.satis(list){
-            singleTypeItem<String>(R.layout.item_single_type){item,position,holder->
+            singleTypeItem<String>(R.layout.item_single_type){ item, position, holder->
                 holder.setText(R.id.tv,"Title $item")
             }
             //关健代码
