@@ -33,16 +33,21 @@ class HeaderAndFootActivity : AppCompatActivity() {
             textView.textSize = 100F
             textView.setBackgroundColor(Color.argb(255, Random().nextInt(255),Random().nextInt(255),Random().nextInt(255)))
             textView.setOnClickListener {
-//                val head2 = TextView(this@HeaderAndFootActivity)
-//                head2.text = "添加头部"
-//                head2.textSize = 50F
-//                head2.setBackgroundColor(Color.argb(255, Random().nextInt(255),Random().nextInt(255),Random().nextInt(255)))
-//                header = head2
+                val head2 = TextView(this@HeaderAndFootActivity)
+                head2.text = "添加头部"
+                head2.textSize = 50F
+                head2.setBackgroundColor(Color.argb(255, Random().nextInt(255),Random().nextInt(255),Random().nextInt(255)))
+                header = head2
 //                recyclerView.adapter!!.notifyItemInserted(getHeaderCount())
                 list.clear()
                 getAdapter().notifyDataSetChanged()
             }
             header = textView
+
+            divider = {
+                size = 15
+                color = Color.BLACK
+            }
 
             val textView1 = TextView(this@HeaderAndFootActivity)
             textView1.text = "添加的尾部"
@@ -59,7 +64,6 @@ class HeaderAndFootActivity : AppCompatActivity() {
                     .show()
                 setLoadMoreState(LoadMoreState.LoadComplete)
             }
-
 
             val empty = TextView(this@HeaderAndFootActivity)
             empty.text = "空内容"

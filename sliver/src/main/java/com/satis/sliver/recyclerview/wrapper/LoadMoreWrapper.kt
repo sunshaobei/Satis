@@ -22,7 +22,7 @@ open class LoadMoreWrapper(mContext: Context, datas: List<Any>) : HeaderAndFootW
     var mLoadMoreState = LoadMoreState.LoadComplete
     private val  mLoadMoreStateManager = LoadMoreStateManager(this)
 
-    private fun loadMoreEnable(): Boolean {
+    fun loadMoreEnable(): Boolean {
         return mLoadMoreView != null || mLoadMoreLayoutId != 0
     }
 

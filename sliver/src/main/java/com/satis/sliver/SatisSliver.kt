@@ -10,10 +10,15 @@ import com.satis.sliver.item.ListTypeItem
 import com.satis.sliver.recyclerview.DividerItemDecoration
 import com.satis.sliver.recyclerview.ViewHolder
 import com.satis.sliver.recyclerview.wrapper.LoadMoreState
+import java.lang.Exception
 
 class SatisSliver(val recyclerView: RecyclerView, datas: List<Any>) {
     private var adapter = SatisAdapter(recyclerView.context, datas)
     var layoutManager: RecyclerView.LayoutManager? = null
+        set(value) {
+            recyclerView.layoutManager = value
+            field = value
+        }
     var divider: (DividerItemDecoration.()->Unit) ? = null
     var header: View? = null
     set(value) {
@@ -37,7 +42,8 @@ class SatisSliver(val recyclerView: RecyclerView, datas: List<Any>) {
             adapter.setEmptyView(value)
             field = value
         }
-    var emptyLayoutId: Int = 0
+    //暂不开放
+    private var emptyLayoutId: Int = 0
         set(value) {
             adapter.setEmptyView(value)
             field = value
@@ -198,11 +204,49 @@ fun RecyclerView.satis(datas: List<Any>, block: SatisSliver.() -> Unit):SatisSli
     val sliver = SatisSliver(this, datas)
     sliver.block()
     //设置layoutManager
-    this.layoutManager = sliver.layoutManager ?: layoutManager ?: LinearLayoutManager(this.context)
+    this.layoutManager = sliver.layoutManager ?: LinearLayoutManager(this.context)
     //添加分割线
     sliver.divider?.let {
-        addItemDecoration(DividerItemDecoration(this.context).apply(it))
+        addItemDecoration(DividerItemDecoration(this).apply{it()})
     }
     adapter = sliver.getAdapter()
     return sliver
+}
+
+
+fun RecyclerView.loadMore(view:View,loadMoreCallback: LoadMoreCallback){
+    if (adapter is SatisAdapter){
+        (adapter as SatisAdapter).setLoadMoreView(view)
+        (adapter as SatisAdapter).mLoadMoreCallback = loadMoreCallback
+    }
+}
+
+fun RecyclerView.loadMore(layoutId: Int,loadMoreCallback: LoadMoreCallback){
+    if (adapter is SatisAdapter){
+        (adapter as SatisAdapter).setLoadMoreView(layoutId)
+        (adapter as SatisAdapter).mLoadMoreCallback = loadMoreCallback
+    }
+}
+
+fun RecyclerView.empty(view:View){
+    if (adapter is SatisAdapter){
+        (adapter as SatisAdapter).setEmptyView(view)
+    }
+}
+
+
+fun RecyclerView.divider(divider:DividerItemDecoration.()->Unit){
+    addItemDecoration(DividerItemDecoration(this).apply { divider() })
+}
+
+fun RecyclerView.headerView(view: View){
+    if (adapter is SatisAdapter){
+        (adapter as SatisAdapter).addHeaderView(view)
+    }
+}
+
+fun RecyclerView.footView(view: View){
+    if (adapter is SatisAdapter){
+        (adapter as SatisAdapter).addFootView(view)
+    }
 }

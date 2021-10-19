@@ -27,7 +27,7 @@ class SliverActivity : AppCompatActivity() {
             }
 
             divider = {
-                orientation = DividerItemDecoration.HORIZONTAL_LIST
+//                orientation = DividerItemDecoration.HORIZONTAL_LIST
                 size = 10
                 paddingLeft = 20
                 color = Color.RED

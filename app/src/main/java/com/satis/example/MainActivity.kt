@@ -26,7 +26,6 @@ class MainActivity : AppCompatActivity() {
                itemClick(list[position])
             }
             divider = {
-                orientation = DividerItemDecoration.HORIZONTAL_LIST
                 size = 10
                 paddingLeft = 20
                 color = Color.RED

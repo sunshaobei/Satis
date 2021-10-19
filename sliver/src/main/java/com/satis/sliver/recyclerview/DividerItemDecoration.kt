@@ -13,8 +13,9 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import java.util.ArrayList
+import com.satis.sliver.recyclerview.wrapper.LoadMoreWrapper
 
 /**
  * 万能分割线
@@ -37,16 +38,9 @@ class DividerItemDecoration : ItemDecoration {
             field = value
         }
 
-    var ignorePosition = 0
-        set(value) {
-            ignorePositions.add(value)
-            field = value
-        }
-    var ignorePositions = ArrayList<Int>()
-
     //列表的方向
-    var orientation = 0
-
+    var orientation = RecyclerView.HORIZONTAL
+        get() = getmOrientation()
 
     /**
      *  设置分割线间距 仅 VERTICAL_LIST 生效
@@ -67,6 +61,8 @@ class DividerItemDecoration : ItemDecoration {
     //分割线下间距
     var paddingBottom = 0
 
+    private lateinit var mRecyclerView: RecyclerView
+
 
     /**
      * 默认分割线：高度为2px，颜色为灰色
@@ -74,26 +70,19 @@ class DividerItemDecoration : ItemDecoration {
      * @param context     上下文
      * @param orientation 列表方向
      */
-    constructor(context: Context) {
-        //获取xml配置的参数
-        val a = context.obtainStyledAttributes(ATTRS)
-        //typedArray.getDrawable(attr)这句是说我们可以通过我们的资源获得资源，使用我们的资源名attr去获得资源id
-        //看不懂就用自己写一个分割线的图片吧，方法：ContextCompat.getDrawable(context, drawableId);
-        drawable = a.getDrawable(0)
-        //官方的解释是：回收TypedArray，以便后面重用。在调用这个函数后，你就不能再使用这个TypedArray。
-        //在TypedArray后调用recycle主要是为了缓存。
-        a.recycle()
+    constructor(recyclerView: RecyclerView) {
+        this.mRecyclerView = recyclerView
     }
 
-
     /**
      * 默认分割线：高度为2px，颜色为灰色
      *
      * @param context     上下文
      * @param orientation 列表方向
      */
-    constructor(context: Context, orientation: Int) {
+    constructor(context: Context, recyclerView: RecyclerView, orientation: Int) {
         this.orientation = orientation
+        mRecyclerView = recyclerView
         //获取xml配置的参数
         val a = context.obtainStyledAttributes(ATTRS)
         //typedArray.getDrawable(attr)这句是说我们可以通过我们的资源获得资源，使用我们的资源名attr去获得资源id
@@ -111,8 +100,9 @@ class DividerItemDecoration : ItemDecoration {
      * @param orientation 列表方向
      * @param drawableId  分割线图片
      */
-    constructor(context: Context?, orientation: Int, drawableId: Int) {
+    constructor(context: Context?, recyclerView: RecyclerView, orientation: Int, drawableId: Int) {
         this.orientation = orientation
+        mRecyclerView = recyclerView
         //旧的getDrawable方法弃用了，这个是新的
         drawable = ContextCompat.getDrawable(context!!, drawableId)
         size = drawable!!.intrinsicHeight
@@ -127,9 +117,10 @@ class DividerItemDecoration : ItemDecoration {
      * @param dividerColor  分割线颜色
      */
     constructor(
-        context: Context?, orientation: Int,
+        context: Context?, recyclerView: RecyclerView, orientation: Int,
         dividerHeight: Int, dividerColor: Int
     ) {
+        mRecyclerView = recyclerView
         this.orientation = orientation
         size = dividerHeight
         Log.e("mDividerHeight", "$size===================")
@@ -138,6 +129,16 @@ class DividerItemDecoration : ItemDecoration {
         mPaint!!.color = dividerColor
         //填满颜色
         mPaint!!.style = Paint.Style.FILL
+    }
+
+
+    private fun getmOrientation(): Int {
+        val layoutManager = mRecyclerView.layoutManager
+        return if (layoutManager is GridLayoutManager || layoutManager is StaggeredGridLayoutManager) {
+            BOTH_SET
+        } else {
+            (layoutManager as LinearLayoutManager).orientation
+        }
     }
 
 
@@ -159,33 +160,44 @@ class DividerItemDecoration : ItemDecoration {
         super.getItemOffsets(outRect, view, parent, state)
         //获取layoutParams参数
         val layoutParams = view.layoutParams as RecyclerView.LayoutParams
-        //当前位置
-        val itemPosition = layoutParams.viewLayoutPosition
         //ItemView数量
-        var childCount = parent.adapter!!.itemCount
+        var layoutPosition = layoutParams.viewLayoutPosition
+        val adapter = parent.adapter
+        var childCount = adapter!!.itemCount
+        if (checkSpecialPosition(parent,layoutPosition)){
+            outRect.set(0, 0, 0, 0)
+            return
+        }
         when (orientation) {
             BOTH_SET -> {
                 //获取Layout的相关参数
                 val spanCount = getSpanCount(parent)
-                if (isLastRaw(parent, itemPosition, spanCount, childCount)) {
+                if (isLastRaw(parent, layoutPosition, spanCount, childCount)) {
                     // 如果是最后一行，则不需要绘制底部
-                    outRect[0, 0, size] = 0
-                } else if (isLastColum(parent, itemPosition, spanCount, childCount)) {
+                    if (isLastColum(parent, layoutPosition, spanCount, childCount)) {
+                        outRect.set(0, 0, 0, 0)
+                    } else {
+                        outRect[0, 0, size] = 0
+                    }
+                } else if (isLastColum(parent, layoutPosition, spanCount, childCount)) {
                     // 如果是最后一列，则不需要绘制右边
-                    outRect[0, 0, 0] = size
+                    outRect.set(0, 0, 0, size)
                 } else {
-                    outRect[0, 0, size] = size
+                    outRect.set(0, 0, size, size)
                 }
             }
-            VERTICAL_LIST -> {
+            RecyclerView.HORIZONTAL -> {
                 childCount -= 1
                 //水平布局右侧留Margin,如果是最后一列,就不要留Margin了
-                outRect[0, 0, if (itemPosition != childCount) size else 0] = 0
+//                outRect[0, 0, if (itemPosition != childCount) size else 0] = 0
+                outRect.set(0, 0, if (layoutPosition != childCount) size else 0, 0)
             }
-            HORIZONTAL_LIST -> {
+            RecyclerView.VERTICAL -> {
                 childCount -= 1
                 //垂直布局底部留边，最后一行不留
-                outRect[0, 0, 0] = if (itemPosition != childCount) size else 0
+//                outRect[0, 0, 0] = if (itemPosition != childCount) size else 0
+                val bottom = if (layoutPosition != childCount) size else 0
+                outRect.set(0, 0, 0, bottom)
             }
         }
     }
@@ -199,13 +211,61 @@ class DividerItemDecoration : ItemDecoration {
      */
     override fun onDraw(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
         super.onDraw(c, parent, state)
-        if (orientation == VERTICAL_LIST) {
-            drawVertical(c, parent)
-        } else if (orientation == HORIZONTAL_LIST) {
+        if (orientation == RecyclerView.HORIZONTAL) {
             drawHorizontal(c, parent)
+        } else if (orientation == RecyclerView.VERTICAL) {
+            drawVertical(c, parent)
         } else {
-            drawHorizontal(c, parent)
-            drawVertical(c, parent)
+//            drawVertical(c, parent)
+//            drawHorizontal(c, parent)
+            drawGrid(c, parent)
+        }
+    }
+
+    private fun drawGrid(canvas: Canvas, parent: RecyclerView) {
+        val childSize = parent.childCount
+        for (i in 0 until childSize) {
+            val child = parent.getChildAt(i)
+            //获取Layout的相关参数
+            val spanCount = getSpanCount(parent)
+            val layoutParams = child.layoutParams as RecyclerView.LayoutParams
+            //item底部的Y轴坐标+margin值
+            val layoutPosition = layoutParams.viewLayoutPosition
+            val adapter = parent.adapter
+            var itemCount = adapter!!.itemCount
+            if (checkSpecialPosition(parent,layoutPosition)){
+                continue
+            }
+            if (mPaint != null) {
+                //绘制底部
+
+                if (!isLastRaw(parent, layoutPosition, spanCount, itemCount)) {
+                    canvas.drawRect(
+                        child.x - layoutParams.leftMargin,
+                        (child.bottom + layoutParams.bottomMargin).toFloat(),
+                        (child.right + layoutParams.rightMargin).toFloat(),
+                        (child.bottom + layoutParams.bottomMargin + size).toFloat(),
+                        mPaint!!
+                    )
+                }
+
+                if (!isLastColum(parent, layoutPosition, spanCount, itemCount)) {
+                    //绘制右边
+                    canvas.drawRect(
+                        (child.right + layoutParams.rightMargin).toFloat(),
+                        child.y - layoutParams.topMargin,
+                        (child.right + layoutParams.rightMargin + size).toFloat(),
+                        (child.bottom + layoutParams.bottomMargin + if (isLastRaw(
+                                parent,
+                                layoutPosition,
+                                spanCount,
+                                itemCount
+                            )
+                        ) 0 else size).toFloat(),
+                        mPaint!!
+                    )
+                }
+            }
         }
     }
 
@@ -215,22 +275,24 @@ class DividerItemDecoration : ItemDecoration {
      * @param canvas 画布
      * @param parent 父容器
      */
-    private fun drawHorizontal(canvas: Canvas, parent: RecyclerView) {
-        val x = parent.paddingLeft + (if (orientation == HORIZONTAL_LIST) paddingLeft else 0)
+    private fun drawVertical(canvas: Canvas, parent: RecyclerView) {
+        val x = parent.paddingLeft + (if (orientation == RecyclerView.VERTICAL) paddingLeft else 0)
         val width =
-            parent.measuredWidth - parent.paddingRight - (if (orientation == HORIZONTAL_LIST) paddingRight else 0)
+            parent.measuredWidth - parent.paddingRight - (if (orientation == RecyclerView.VERTICAL) paddingRight else 0)
         //getChildCount()(ViewGroup.getChildCount) 返回的是显示层面上的“所包含的子 View 个数”。
         val childSize = parent.childCount
         for (i in 0 until childSize) {
             val child = parent.getChildAt(i)
-//            val findContainingViewHolder = parent.findContainingViewHolder(child)
-//            val adapterPosition = findContainingViewHolder!!.adapterPosition
-//            if (orientation == HORIZONTAL_LIST){
-//                if (adapterPosition == parent.adapter!!.itemCount-1){
-//                    continue
-//                }
-//            }
             val layoutParams = child.layoutParams as RecyclerView.LayoutParams
+            val layoutPosition = layoutParams.viewLayoutPosition
+            if (checkSpecialPosition(parent,layoutPosition)){
+                continue
+            }
+            if (orientation == RecyclerView.VERTICAL) {
+                if (layoutPosition == parent.adapter!!.itemCount - 1) {
+                    continue
+                }
+            }
             //item底部的Y轴坐标+margin值
             val y = child.bottom + layoutParams.bottomMargin
             val height = y + size
@@ -259,14 +321,24 @@ class DividerItemDecoration : ItemDecoration {
      * @param canvas
      * @param parent
      */
-    private fun drawVertical(canvas: Canvas, parent: RecyclerView) {
-        val top = parent.paddingTop + (if (orientation == VERTICAL_LIST) paddingTop else 0)
+    private fun drawHorizontal(canvas: Canvas, parent: RecyclerView) {
+        val top =
+            parent.paddingTop + (if (orientation == RecyclerView.HORIZONTAL) paddingTop else 0)
         val bottom =
-            parent.measuredHeight - parent.paddingBottom - (if (orientation == VERTICAL_LIST) paddingBottom else 0)
+            parent.measuredHeight - parent.paddingBottom - (if (orientation == RecyclerView.HORIZONTAL) paddingBottom else 0)
         val childSize = parent.childCount
         for (i in 0 until childSize) {
             val child = parent.getChildAt(i)
             val layoutParams = child.layoutParams as RecyclerView.LayoutParams
+            val layoutPosition = layoutParams.viewLayoutPosition
+            if (checkSpecialPosition(parent,layoutPosition)){
+                continue
+            }
+            if (orientation == RecyclerView.HORIZONTAL) {
+                if (layoutPosition == parent.adapter!!.itemCount - 1) {
+                    return
+                }
+            }
             val left = child.right + layoutParams.rightMargin
             val right = left + size
             if (drawable != null) {
@@ -283,6 +355,27 @@ class DividerItemDecoration : ItemDecoration {
                 )
             }
         }
+    }
+
+    private fun checkSpecialPosition(parent: RecyclerView, adapterPosition:Int):Boolean{
+        val adapter = parent.adapter
+        var childCount = adapter!!.itemCount
+        if (adapter is LoadMoreWrapper) {
+            val headersCount = adapter.headersCount
+            var footersCount = adapter.footersCount
+            if (adapterPosition < headersCount) {
+                return true
+            }
+            if (footersCount > 0 || adapter.loadMoreEnable()) {
+                if (adapter.loadMoreEnable()){
+                    footersCount +=1
+                }
+                if (adapterPosition >= childCount - footersCount-1) {
+                    return true
+                }
+            }
+        }
+        return false
     }
 
     /**
@@ -307,29 +400,29 @@ class DividerItemDecoration : ItemDecoration {
         parent: RecyclerView, pos: Int, spanCount: Int,
         childCount: Int
     ): Boolean {
-        var childCount = childCount
+        var itemCount = childCount
         val layoutManager = parent.layoutManager
         if (layoutManager is GridLayoutManager) {
             val orientation = layoutManager
                 .orientation
-            if (orientation == StaggeredGridLayoutManager.VERTICAL) {
+            if (orientation == RecyclerView.VERTICAL) {
                 // 如果是最后一列，则不需要绘制右边
                 if ((pos + 1) % spanCount == 0) return true
             } else {
-                childCount -= childCount % spanCount
-                // 如果是最后一列，则不需要绘制右边
-                if (pos >= childCount) return true
+                val i = itemCount % spanCount
+                itemCount -= if (i == 0) spanCount else i
+                if (pos >= itemCount) return true
             }
         } else if (layoutManager is StaggeredGridLayoutManager) {
             val orientation = layoutManager
                 .orientation
-            if (orientation == StaggeredGridLayoutManager.VERTICAL) {
+            if (orientation == RecyclerView.VERTICAL) {
                 // 如果是最后一列，则不需要绘制右边
                 if ((pos + 1) % spanCount == 0) return true
             } else {
-                childCount -= childCount % spanCount
-                // 如果是最后一列，则不需要绘制右边
-                if (pos >= childCount) return true
+                val i = itemCount % spanCount
+                itemCount -= if (i == 0) spanCount else i
+                if (pos >= itemCount) return true
             }
         }
         return false
@@ -339,17 +432,17 @@ class DividerItemDecoration : ItemDecoration {
         parent: RecyclerView, pos: Int, spanCount: Int,
         childCount: Int
     ): Boolean {
-        var childCount = childCount
+        var itemCount = childCount
         val orientation: Int
         val layoutManager = parent.layoutManager
         if (layoutManager is GridLayoutManager) {
-            childCount -= childCount % spanCount
             orientation = layoutManager
                 .orientation
             if (orientation == StaggeredGridLayoutManager.VERTICAL) {
                 // 如果是最后一行，则不需要绘制底部
-                childCount -= childCount % spanCount
-                if (pos >= childCount) return true
+                val i = itemCount % spanCount
+                itemCount -= if (i == 0) spanCount else i
+                if (pos >= itemCount) return true
             } else { // StaggeredGridLayoutManager 横向滚动
                 // 如果是最后一行，则不需要绘制底部
                 if ((pos + 1) % spanCount == 0) return true
@@ -359,8 +452,9 @@ class DividerItemDecoration : ItemDecoration {
                 .orientation
             if (orientation == StaggeredGridLayoutManager.VERTICAL) {
                 // 如果是最后一行，则不需要绘制底部
-                childCount -= childCount % spanCount
-                if (pos >= childCount) return true
+                val i = itemCount % spanCount
+                itemCount -= if (i == 0) spanCount else i
+                if (pos >= itemCount) return true
             } else { // StaggeredGridLayoutManager 横向滚动
                 // 如果是最后一行，则不需要绘制底部
                 if ((pos + 1) % spanCount == 0) return true
@@ -369,15 +463,10 @@ class DividerItemDecoration : ItemDecoration {
         return false
     }
 
+
     companion object {
         //系统自带的参数
         private val ATTRS = intArrayOf(R.attr.listDivider)
-
-        //水平
-        const val HORIZONTAL_LIST = RecyclerView.HORIZONTAL
-
-        //垂直
-        const val VERTICAL_LIST = RecyclerView.VERTICAL
 
         //水平+垂直
         const val BOTH_SET = 2
