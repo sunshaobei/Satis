@@ -6,9 +6,15 @@
     android:layout_height="match_parent"
     tools:context=".sliver.HeaderAndFootActivity">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv"
+    <com.satis.example.overscroll.RVScrollLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+
+    </com.satis.example.overscroll.RVScrollLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

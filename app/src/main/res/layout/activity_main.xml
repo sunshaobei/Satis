@@ -8,14 +8,27 @@
         android:layout_height="match_parent"
         tools:context=".MainActivity">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv"
+
+        <com.satist.overscroll.OverScrollLayout
             android:layout_width="0dp"
             android:layout_height="0dp"
+            app:oslEnableRefresh="false"
+            app:oslEnableOverScrollBounce="true"
+            app:oslEnableOverScrollDrag="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+               />
+
+
+        </com.satist.overscroll.OverScrollLayout>
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
