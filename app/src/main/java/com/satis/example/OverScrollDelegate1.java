@@ -10,11 +10,11 @@ import androidx.annotation.NonNull;
 import androidx.core.view.ViewCompat;
 
 
-public class OverScrollDelegate {
+public class OverScrollDelegate1 {
     View mContentView;
     Scroller mScroller;
     boolean mVerticalPermit;
-    public OverScrollDelegate(View contentView){
+    public OverScrollDelegate1(View contentView){
         mContentView = contentView;
         mScroller = new Scroller(contentView.getContext());
     }

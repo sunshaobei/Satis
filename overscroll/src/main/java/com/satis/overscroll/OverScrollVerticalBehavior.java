@@ -42,7 +42,6 @@ public class OverScrollVerticalBehavior extends BaseOverScrollBehavior {
                                View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed,
                                int type) {
         onNestedScrollInner(coordinatorLayout, child, target, dyConsumed, dyUnconsumed, type);
-
     }
 
     @Override
