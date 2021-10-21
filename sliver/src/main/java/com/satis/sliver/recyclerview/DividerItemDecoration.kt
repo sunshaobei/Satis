@@ -123,7 +123,7 @@ class DividerItemDecoration : ItemDecoration {
         mRecyclerView = recyclerView
         this.orientation = orientation
         size = dividerHeight
-        Log.e("mDividerHeight", "$size===================")
+//        Log.e("mDividerHeight", "$size===================")
         //抗锯齿画笔
         mPaint = Paint(Paint.ANTI_ALIAS_FLAG)
         mPaint!!.color = dividerColor
@@ -296,7 +296,7 @@ class DividerItemDecoration : ItemDecoration {
             //item底部的Y轴坐标+margin值
             val y = child.bottom + layoutParams.bottomMargin
             val height = y + size
-            Log.e("height", "$height===================")
+//            Log.e("height", "$height===================")
             if (drawable != null) {
                 //setBounds(x,y,width,height); x:组件在容器X轴上的起点 y:组件在容器Y轴上的起点
                 // width:组件的长度 height:组件的高度

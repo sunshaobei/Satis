@@ -1,4 +1,4 @@
-package com.satist.overscroll
+package com.satis.overscroll
 
 import org.junit.Test
 
