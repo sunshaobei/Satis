@@ -10,6 +10,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Satis">
         <activity
+            android:name=".overscroll.NestedScrollActivity"
+            android:exported="false" />
+        <activity
+            android:name=".overscroll.OverScrollTestActivity"
+            android:exported="false" />
+        <activity
             android:name=".overscroll.OverScrollActivity"
             android:exported="true" />
         <activity

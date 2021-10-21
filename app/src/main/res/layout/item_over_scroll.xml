@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout>
+    <data>
+        <variable
+            name="item"
+            type="com.satis.example.overscroll.Item" />
+        <import type="android.graphics.Color"/>
+
+    </data>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="200dp"
+    android:background="@{item.color}"
+    android:layout_height="200dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_centerInParent="true"
+        android:text="@{item.text}"
+        android:layout_height="wrap_content"/>
+
+</RelativeLayout>
+
+</layout>

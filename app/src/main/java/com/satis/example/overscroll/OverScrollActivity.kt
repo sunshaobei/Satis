@@ -1,11 +1,13 @@
 package com.satis.example.overscroll
 
+import android.content.Intent
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.databinding.DataBindingUtil
 import com.satis.example.*
 import com.satis.example.databinding.ActivityOverScrollBinding
+import com.satis.example.sliver.SingleTypeActivity
 import com.satis.sliver.satis
 
 class OverScrollActivity : AppCompatActivity() {
@@ -27,12 +29,6 @@ class OverScrollActivity : AppCompatActivity() {
             itemClick = { _, _, position ->
                 itemClick(list[position])
             }
-//            divider = {
-//                size = 10
-//                paddingLeft = 20
-//                color = Color.RED
-//                paddingRight = 20
-//            }
         }
     }
 
@@ -40,10 +36,18 @@ class OverScrollActivity : AppCompatActivity() {
     private fun itemClick(text: String) {
         when (text) {
             "HORIZONTAL_SCROLL" -> {
+                val intent = Intent( this@OverScrollActivity, OverScrollTestActivity::class.java)
+                intent.putExtra("orientation",1)
+                startActivity(intent)
             }
             "VERTICAL" -> {
+                val intent = Intent( this@OverScrollActivity, OverScrollTestActivity::class.java)
+                intent.putExtra("orientation",0)
+                startActivity(intent)
             }
             "NESTED_SCROLL" -> {
+                val intent = Intent( this@OverScrollActivity, NestedScrollActivity::class.java)
+                startActivity(intent)
             }
             "TEST" -> {
             }

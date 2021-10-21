@@ -204,7 +204,7 @@ fun RecyclerView.satis(datas: List<Any>, block: SatisSliver.() -> Unit):SatisSli
     val sliver = SatisSliver(this, datas)
     sliver.block()
     //设置layoutManager
-    this.layoutManager = sliver.layoutManager ?: LinearLayoutManager(this.context)
+    this.layoutManager = sliver.layoutManager ?:(this.layoutManager?: LinearLayoutManager(this.context))
     //添加分割线
     sliver.divider?.let {
         addItemDecoration(DividerItemDecoration(this).apply{it()})
@@ -239,14 +239,30 @@ fun RecyclerView.divider(divider:DividerItemDecoration.()->Unit){
     addItemDecoration(DividerItemDecoration(this).apply { divider() })
 }
 
-fun RecyclerView.headerView(view: View){
+fun RecyclerView.headerView(view: View,insertAnimate:Boolean = false){
     if (adapter is SatisAdapter){
         (adapter as SatisAdapter).addHeaderView(view)
+        if (insertAnimate){
+            (adapter as SatisAdapter).notifyItemInserted( (adapter as SatisAdapter).headersCount)
+        }else{
+            (adapter as SatisAdapter).notifyDataSetChanged()
+        }
     }
 }
 
-fun RecyclerView.footView(view: View){
+fun RecyclerView.footView(view: View,insertAnimate:Boolean = false){
     if (adapter is SatisAdapter){
         (adapter as SatisAdapter).addFootView(view)
+        if (insertAnimate){
+            val adapter1 = (adapter as SatisAdapter)
+            var itemCount = adapter1.itemCount
+            val loadMoreEnable = adapter1.loadMoreEnable()
+            if (loadMoreEnable){
+                itemCount -= 1
+            }
+            (adapter as SatisAdapter).notifyItemInserted(itemCount)
+        }else{
+            (adapter as SatisAdapter).notifyDataSetChanged()
+        }
     }
 }

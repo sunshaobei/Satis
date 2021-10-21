@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.databinding.ViewDataBinding
 import com.satis.sliver.recyclerview.ViewHolder
 import java.lang.Exception
+import java.util.*
 
 object BindingAdapter {
     /**
@@ -27,9 +28,7 @@ object BindingAdapter {
                 } catch (e: Exception) {
                     e.printStackTrace()
                 }
-                null
             }
-            null
         }
     }
 }

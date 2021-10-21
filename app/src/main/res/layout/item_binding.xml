@@ -4,23 +4,21 @@
     <data>
         <variable
             name="item2"
-            type="String" />
+            type="com.satis.example.overscroll.Item" />
     </data>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    android:background="@{item2.color}"
     android:layout_height="wrap_content">
 
     <TextView
         android:layout_width="match_parent"
-        android:layout_marginTop="10dp"
-        android:background="#000000"
         android:textColor="#fff"
-        android:layout_marginBottom="10dp"
         android:textSize="20dp"
         android:gravity="center"
-        android:text="@{item2}"
-        android:layout_height="wrap_content"/>
+        android:text="@{item2.text}"
+        android:layout_height="60dp"/>
 
 
 </RelativeLayout>

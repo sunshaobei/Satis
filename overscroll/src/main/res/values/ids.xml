@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <item type="id" name="osl_tag"/>
+    <item type="id" name="tag_overscroll_delegate"/>
+    <item type="id" name="tag_overscroll_offset_listener"/>
 </resources>
