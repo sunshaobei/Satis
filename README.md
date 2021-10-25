@@ -1,7 +1,7 @@
 # Satis
 快速、高效的Android 开发框架
 
-## [Sliver]() RecyclerView正确的使用方式
+## [Sliver](https://github.com/sunshaobei/Satis/blob/master/sliver/README.md) RecyclerView正确的使用方式
 
 ## [OverScroll](https://github.com/sunshaobei/Satis/tree/master/overscroll#readme) 原生支持OverScroll（滚动回弹效果）
 
