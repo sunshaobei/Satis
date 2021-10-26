@@ -50,6 +50,8 @@ class OverScrollActivity : AppCompatActivity() {
                 startActivity(intent)
             }
             "TEST" -> {
+                val intent = Intent( this@OverScrollActivity, CoordinatorActivity::class.java)
+                startActivity(intent)
             }
         }
     }

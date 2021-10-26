@@ -1,5 +1,6 @@
 package com.satis.example
 
+import android.graphics.Canvas
 import com.satis.overscroll.Constants
 import org.aspectj.lang.annotation.Aspect
 import org.aspectj.lang.annotation.Around
@@ -9,6 +10,18 @@ import com.satis.overscroll.aop.AOPOverScroll
 
 @Aspect
 class AOPTest {
+
+//    @Around( "execution(* androidx.recyclerview.widget.RecyclerView.draw(..))")
+//    @Throws(Throwable::class)
+//    fun draw(joinPoint: ProceedingJoinPoint){
+//        val args = joinPoint.args
+//        val canvas = args[0] as Canvas
+//        canvas.save()
+//        canvas.translate(0f,100f)
+//        joinPoint.proceed()
+//        canvas.restore()
+//    }
+
     @Around(Constants.STARTNESTEDSCROLL)
     @Throws(Throwable::class)
     fun startNestedScroll(joinPoint: ProceedingJoinPoint): Any? {

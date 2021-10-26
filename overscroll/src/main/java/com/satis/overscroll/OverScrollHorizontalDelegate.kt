@@ -20,8 +20,8 @@ class OverScrollHorizontalDelegate(contentView: View) : OverScrollDelegate(conte
     override fun onNestedScroll(
         target: View?, dxConsumed: Int, dyConsumed: Int, dxUnconsumed: Int, dyUnconsumed: Int,
         type: Int
-    ) {
-        onNestedScrollInner(target!!, dxUnconsumed, type)
+    ) :Int{
+       return onNestedScrollInner(target!!, dxUnconsumed, type)
     }
 
     override fun onNestedPreFling(target: View?, velocityX: Float, velocityY: Float): Boolean {

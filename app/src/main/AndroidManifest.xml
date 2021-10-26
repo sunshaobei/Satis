@@ -10,6 +10,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Satis">
         <activity
+            android:name=".overscroll.CoordinatorActivity"
+            android:exported="false" />
+        <activity
             android:name=".overscroll.NestedScrollActivity"
             android:exported="false" />
         <activity

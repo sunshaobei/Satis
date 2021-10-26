@@ -14,8 +14,12 @@
     tools:context=".sliver.BindingActivity">
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:scrollbarStyle="outsideOverlay"
+        android:scrollbars="vertical"
+        android:scrollbarAlwaysDrawVerticalTrack="true"
         items="@{items}"
         singleTypeItem="@{@layout/item_binding}"
         bindingBR='@{"item2"}'

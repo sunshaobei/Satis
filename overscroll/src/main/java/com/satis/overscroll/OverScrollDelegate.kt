@@ -1,6 +1,7 @@
 package com.satis.overscroll
 
 import android.animation.ValueAnimator
+import android.util.Log
 import android.view.View
 import android.view.ViewConfiguration
 import android.view.animation.DecelerateInterpolator
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import androidx.core.math.MathUtils
 import com.satis.overscroll.api.OverScrollOffsetChangeListener
+import com.satis.overscroll.refresh.RefreshItemDecoration
 import java.util.ArrayList
 import kotlin.math.abs
 
@@ -26,6 +28,17 @@ abstract class OverScrollDelegate(private val mContentView: View) : OverScrollIm
 
     @ScrollDirection
     private var mDirectionToStart = 0
+
+    fun setOnRefreshListener(refresh: RefreshCallback) {
+
+    }
+
+    init {
+        if (mContentView is RecyclerView) {
+            mContentView.addItemDecoration(RefreshItemDecoration())
+        }
+    }
+
     abstract fun onStartNestedScroll(nestedScrollAxes: Int, type: Int): Boolean
     fun onNestedScrollAccepted(target: View, axes: Int, type: Int) {
         if (type == ViewCompat.TYPE_TOUCH) {
@@ -52,7 +65,7 @@ abstract class OverScrollDelegate(private val mContentView: View) : OverScrollIm
     abstract fun onNestedScroll(
         target: View?, dxConsumed: Int, dyConsumed: Int, dxUnconsumed: Int, dyUnconsumed: Int,
         type: Int
-    )
+    ): Int
 
     /**
      * @return consumed distance
@@ -81,9 +94,9 @@ abstract class OverScrollDelegate(private val mContentView: View) : OverScrollIm
         return 0
     }
 
-    protected fun onNestedScrollInner(
+    fun onNestedScrollInner(
         target: View, distanceUnconsumed: Int, type: Int
-    ) {
+    ): Int {
         if (distanceUnconsumed != 0) { // fix nested scroll bugs
             mContentView.parent.requestDisallowInterceptTouchEvent(true)
         }
@@ -91,10 +104,10 @@ abstract class OverScrollDelegate(private val mContentView: View) : OverScrollIm
             // If the scrolling view is scrolling to end but not consuming, it's probably be at
             // the top of it's content
             if (!canScroll(this, target, mDirectionToEnd)) {
-                return
+                return 0
             }
             if (type == ViewCompat.TYPE_TOUCH) {
-                scroll(target, distanceUnconsumed, 0, getMaxOffset(target))
+                return scroll(target, distanceUnconsumed, 0, getMaxOffset(target))
             } else { // fling
                 if (mOverScroller == null || !mOverScroller!!.computeScrollOffset()
                     || Math.abs(mOverScroller!!.currVelocity) < Math.abs(
@@ -108,7 +121,7 @@ abstract class OverScrollDelegate(private val mContentView: View) : OverScrollIm
                 ) { // reach edge
                     ViewCompat.stopNestedScroll(target, ViewCompat.TYPE_NON_TOUCH)
                 } else {
-                    scroll(
+                    return scroll(
                         target, distanceUnconsumed,
                         getOffset(target), getMaxFlingOffset(this, target, mDirectionToEnd)
                     )
@@ -116,10 +129,10 @@ abstract class OverScrollDelegate(private val mContentView: View) : OverScrollIm
             }
         } else if (distanceUnconsumed > 0) {
             if (!canScroll(this, target, mDirectionToStart)) {
-                return
+                return 0
             }
             if (type == ViewCompat.TYPE_TOUCH) {
-                scroll(target, distanceUnconsumed, getMinOffset(target), 0)
+                return scroll(target, distanceUnconsumed, getMinOffset(target), 0)
             } else { // fling
                 if (mOverScroller == null || !mOverScroller!!.computeScrollOffset()
                     || abs(mOverScroller!!.currVelocity) < Math.abs(
@@ -133,13 +146,15 @@ abstract class OverScrollDelegate(private val mContentView: View) : OverScrollIm
                 ) { // reach edge
                     ViewCompat.stopNestedScroll(target, ViewCompat.TYPE_NON_TOUCH)
                 } else {
-                    scroll(
+                    return scroll(
                         target, distanceUnconsumed,  // slow down
                         getMaxFlingOffset(this, target, mDirectionToStart), getOffset(target)
                     )
                 }
             }
         }
+
+        return 0
     }
 
     abstract fun onNestedPreFling(target: View?, velocityX: Float, velocityY: Float): Boolean
@@ -154,9 +169,7 @@ abstract class OverScrollDelegate(private val mContentView: View) : OverScrollIm
     fun onStopNestedScroll(target: View, type: Int) {
         if (type == ViewCompat.TYPE_TOUCH) { // touching
             if (getOffset(target) != 0) { // and out of bound
-                if (mOverScroller == null || !mOverScroller!!.computeScrollOffset()) { // no fling
-                    springBack(target)
-                }
+                springBack(target)
             }
         } else {
             if (getOffset(target) != 0) {
@@ -210,6 +223,7 @@ abstract class OverScrollDelegate(private val mContentView: View) : OverScrollIm
                 setOffset(child, newOffset)
                 // Update how much dy we have consumed
                 consumed = curOffset - newOffset
+
             }
         }
         return consumed
@@ -317,7 +331,7 @@ abstract class OverScrollDelegate(private val mContentView: View) : OverScrollIm
     override fun onOffsetChanged(overScroll: OverScrollImp?, child: View?, offset: Int) {
         val tag = mContentView.getTag(R.id.tag_overscroll_offset_listener)
         tag?.let {
-            (tag as OverScrollOffsetChangeListener).onOffsetChanged(mContentView,offset)
+            (tag as OverScrollOffsetChangeListener).onOffsetChanged(mContentView, offset)
         }
     }
 
@@ -330,6 +344,7 @@ abstract class OverScrollDelegate(private val mContentView: View) : OverScrollIm
     companion object {
         private const val MAX_BOUNCE_BACK_DURATION_MS = 300
         private const val MIN_BOUNCE_BACK_DURATION_MS = 150
+
         @JvmStatic
         fun createByTarget(target: View): OverScrollDelegate {
             if (target is RecyclerView) {

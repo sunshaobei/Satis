@@ -23,10 +23,13 @@
         <entry key="../satis/app/src/main/res/layout/layout_recyclerview_vertical.xml" value="0.18704710144927536" />
         <entry key="../satis/app/src/main/res/layout/layout_scrollview.xml" value="0.18704710144927536" />
         <entry key="../satis/app/src/main/res/layout/layout_test.xml" value="0.18704710144927536" />
+        <entry key="app/src/main/res/drawable/list.xml" value="0.12962962962962962" />
         <entry key="app/src/main/res/layout/activity_binding.xml" value="0.18177083333333333" />
+        <entry key="app/src/main/res/layout/activity_coordinator.xml" value="0.2259963768115942" />
         <entry key="app/src/main/res/layout/activity_header_and_foot.xml" value="0.21458333333333332" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.2515625" />
         <entry key="app/src/main/res/layout/activity_multi_type.xml" value="0.2957427536231884" />
+        <entry key="app/src/main/res/layout/activity_over_scroll_test.xml" value="0.2259963768115942" />
         <entry key="app/src/main/res/layout/activity_single_type.xml" value="0.21041666666666667" />
         <entry key="app/src/main/res/layout/item.xml" value="0.2957427536231884" />
         <entry key="app/src/main/res/layout/item2.xml" value="0.2515625" />
