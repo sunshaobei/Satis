@@ -27,16 +27,35 @@
 
         </com.google.android.material.appbar.AppBarLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:layout_centerInParent="true"
-            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
-            android:id="@+id/rv"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            items="@{items}"
-            singleTypeItem="@{@layout/item_over_scroll}"
-            bindingBR='@{"item"}'
-            />
+            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
+            android:layout_height="match_parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:paddingTop="100dp"
+                android:clipToPadding="false"
+                android:layout_centerInParent="true"
+                android:id="@+id/rv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                items="@{items}"
+                singleTypeItem="@{@layout/item_over_scroll}"
+                bindingBR='@{"item"}'
+                />
+
+            <TextView
+                android:id="@+id/tv"
+                android:layout_width="match_parent"
+                android:background="@color/white"
+                android:gravity="center"
+                android:layout_marginTop="-60dp"
+                android:textSize="12dp"
+                android:text="下拉刷新"
+                android:layout_height="60dp"/>
+
+        </FrameLayout>
+
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 

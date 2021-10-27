@@ -1,9 +1,10 @@
 package com.satis.overscroll
 
+import android.animation.Animator
 import android.animation.ValueAnimator
-import android.util.Log
 import android.view.View
 import android.view.ViewConfiguration
+import android.view.animation.Animation
 import android.view.animation.DecelerateInterpolator
 import android.view.animation.Interpolator
 import android.widget.OverScroller
@@ -13,9 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import androidx.core.math.MathUtils
-import com.satis.overscroll.api.OverScrollOffsetChangeListener
-import com.satis.overscroll.refresh.RefreshItemDecoration
-import java.util.ArrayList
+import com.satis.overscroll.api.RefreshImp
 import kotlin.math.abs
 
 abstract class OverScrollDelegate(private val mContentView: View) : OverScrollImp {
@@ -29,15 +28,13 @@ abstract class OverScrollDelegate(private val mContentView: View) : OverScrollIm
     @ScrollDirection
     private var mDirectionToStart = 0
 
-    fun setOnRefreshListener(refresh: RefreshCallback) {
 
-    }
-
-    init {
-        if (mContentView is RecyclerView) {
-            mContentView.addItemDecoration(RefreshItemDecoration())
-        }
-    }
+    val mRefreshImp: RefreshImp?
+        get() = mContentView.getTag(R.id.tag_overscroll_refresh) as RefreshImp?
+    val mRefreshCallback: RefreshCallback?
+        get() = mContentView.getTag(R.id.tag_overscroll_refresh_listener) as RefreshCallback?
+    val mOffsetListeners: ArrayList<OverScrollOffsetChangeCallback>?
+        get() = mContentView.getTag(R.id.tag_overscroll_offset_listener) as ArrayList<OverScrollOffsetChangeCallback>?
 
     abstract fun onStartNestedScroll(nestedScrollAxes: Int, type: Int): Boolean
     fun onNestedScrollAccepted(target: View, axes: Int, type: Int) {
@@ -220,7 +217,8 @@ abstract class OverScrollDelegate(private val mContentView: View) : OverScrollIm
             // offsets, calculate a new offset
             newOffset = MathUtils.clamp(newOffset, minOffset, maxOffset)
             if (curOffset != newOffset) {
-                setOffset(child, newOffset)
+                val direction = if (newOffset > 0) mDirectionToStart else mDirectionToEnd
+                setOffset(child, newOffset,direction)
                 // Update how much dy we have consumed
                 consumed = curOffset - newOffset
 
@@ -229,67 +227,112 @@ abstract class OverScrollDelegate(private val mContentView: View) : OverScrollIm
         return consumed
     }
 
-    override fun stopSpringBack(child: View?) {
+    override fun stopSpringBack(target: View?) {
         if (mSpringBackAnimator != null) {
             if (mSpringBackAnimator!!.isRunning) {
                 mSpringBackAnimator!!.cancel()
             }
         }
-        onStopSpringingBack(this, child)
+        onStopSpringingBack(this, target)
     }
 
-    override fun springBack(child: View) {
-        val startOffset = getOffset(child)
+    override fun springBack(target: View) {
+        val startOffset = getOffset(target)
+        var endOffset = 0
+        var durationRate = 1f
         if (startOffset == 0) {
             return
         }
-        if (onSpringBack(this, child)) {
+        if (onSpringBack(this, target)) {
             return
         }
+
+        // 是否需要刷新
+        if (mRefreshImp != null) {
+            val refreshHeight = mRefreshImp!!.getRefreshHeight()
+            if (startOffset > refreshHeight) {
+                endOffset = refreshHeight
+                durationRate = (startOffset - refreshHeight) / ((startOffset).toFloat())
+            }
+        }
+
+
         if (mSpringBackAnimator == null) {
             mSpringBackAnimator = ValueAnimator.ofInt()
             mSpringBackAnimator?.addUpdateListener { animation ->
                 val value = animation.animatedValue as Int
-                setOffset(child, value)
+                setOffset(target, value,mDirectionToStart)
             }
+            mSpringBackAnimator!!.addListener(object : Animator.AnimatorListener {
+                override fun onAnimationStart(animation: Animator?) {
+                }
+
+                override fun onAnimationEnd(animation: Animator?) {
+                    checkRefresh(target)
+                }
+
+                override fun onAnimationCancel(animation: Animator?) {
+                }
+
+                override fun onAnimationRepeat(animation: Animator?) {
+                }
+            })
         }
         if (mSpringBackAnimator!!.isStarted) {
             return
         }
         val bounceBackDuration =
-            abs(startOffset) * 1f / getMaxOffset(child) * MAX_BOUNCE_BACK_DURATION_MS
+            abs(startOffset) * 1f / getMaxOffset(target) * MAX_BOUNCE_BACK_DURATION_MS
         mSpringBackAnimator!!.duration =
-            bounceBackDuration.toInt().coerceAtLeast(MIN_BOUNCE_BACK_DURATION_MS).toLong()
+            (bounceBackDuration.toInt()
+                .coerceAtLeast(MIN_BOUNCE_BACK_DURATION_MS) * durationRate).toLong()
         mSpringBackAnimator!!.interpolator = mSpringBackInterpolator
-        mSpringBackAnimator!!.setIntValues(startOffset, 0)
+        mSpringBackAnimator!!.setIntValues(startOffset, endOffset)
         mSpringBackAnimator!!.start()
     }
 
-    override fun setOffset(child: View, offset: Int) {
-        updateOffset(child, offset)
-        onOffsetChanged(this, child, getOffset(child))
+    private fun checkRefresh(target: View) {
+        if (mRefreshImp != null) {
+            val refreshHeight = mRefreshImp!!.getRefreshHeight()
+            val offset = getOffset(target)
+            if (refreshHeight == offset) {
+                mRefreshImp!!.setRefreshState(RefreshImp.REFRESHING)
+                if (mRefreshCallback != null) {
+                    mRefreshCallback!!.invoke()
+                }
+            }
+        }
     }
 
-    open fun updateOffset(child: View, offset: Int) {
-        child.translationY = offset.toFloat()
+    private fun setOffset(target: View, offset: Int,@ScrollDirection scrollDirection: Int) {
+        updateOffset(target, offset,scrollDirection)
+        updateRefreshOffset(target, offset)
+        onOffsetChanged(this, target, getOffset(target))
     }
 
-    override fun getOffset(child: View): Int {
-        return child.translationY.toInt()
+    private fun updateRefreshOffset(target: View, offset: Int) {
+        mRefreshImp?.run {
+            updateOffset(offset)
+            if (offset>=getRefreshHeight()){
+                setRefreshState(RefreshImp.PULL_DOWN_OVER)
+            }else{
+                setRefreshState(RefreshImp.PULL_DOWN)
+            }
+        }
     }
 
-    override fun getMaxOffset(child: View): Int {
-        return child.height
+    override fun getMaxOffset(target: View): Int {
+        return target.height
     }
 
-    override fun getMinOffset(child: View): Int {
-        return -child.height
+    override fun getMinOffset(target: View): Int {
+        return -target.height
     }
 
     private var mMinFlingVelocity = 0
     override fun canScroll(
         overScroll: OverScrollImp?,
-        child: View?,
+        target: View?,
         @ScrollDirection scrollDirection: Int
     ): Boolean {
         return true
@@ -297,49 +340,58 @@ abstract class OverScrollDelegate(private val mContentView: View) : OverScrollIm
 
     override fun getMaxFlingOffset(
         overScroll: OverScrollImp?,
-        child: View,
+        target: View,
         @ScrollDirection scrollDirection: Int
     ): Int {
-        return if (scrollDirection == OverScrollImp.DIRECTION_DOWN || scrollDirection == OverScrollImp.Companion.DIRECTION_RIGHT) {
-            child.height / 3
+        return if (scrollDirection == OverScrollImp.DIRECTION_DOWN || scrollDirection == OverScrollImp.DIRECTION_RIGHT) {
+            target.height / 3
         } else {
-            -child.height / 3
+            -target.height / 3
         }
     }
 
     override fun getDampingFactor(
         overScroll: OverScrollImp,
-        child: View,
+        target: View,
         @ScrollDirection scrollDirection: Int
     ): Float {
-        val absOffset = abs(overScroll.getOffset(child))
-        val progress = absOffset * 1f / child.height
+        val absOffset = abs(overScroll.getOffset(target))
+        val progress = absOffset * 1f / target.height
         return 1 + 4 * progress // factor = {1, 5}
     }
 
     override fun getMinFlingVelocity(
         overScroll: OverScrollImp?,
-        child: View,
+        target: View,
         scrollDirection: Int
     ): Int {
         if (mMinFlingVelocity <= 0) {
-            mMinFlingVelocity = ViewConfiguration.get(child.context).scaledMinimumFlingVelocity * 15
+            mMinFlingVelocity =
+                ViewConfiguration.get(target.context).scaledMinimumFlingVelocity * 15
         }
         return mMinFlingVelocity
     }
 
-    override fun onOffsetChanged(overScroll: OverScrollImp?, child: View?, offset: Int) {
-        val tag = mContentView.getTag(R.id.tag_overscroll_offset_listener)
-        tag?.let {
-            (tag as OverScrollOffsetChangeListener).onOffsetChanged(mContentView, offset)
+    override fun onOffsetChanged(overScroll: OverScrollImp?, target: View?, offset: Int) {
+        mOffsetListeners?.let {
+            for (listener in mOffsetListeners as ArrayList<OverScrollOffsetChangeCallback>) {
+                listener.invoke(mContentView, offset)
+            }
         }
     }
 
-    override fun onSpringBack(overScroll: OverScrollImp?, child: View?): Boolean {
+    override fun onSpringBack(overScroll: OverScrollImp?, target: View?): Boolean {
         return false
     }
 
-    override fun onStopSpringingBack(overScroll: OverScrollImp?, child: View?) {}
+    override fun onStopSpringingBack(overScroll: OverScrollImp?, target: View?) {}
+    fun refreshComplete() {
+        if (mRefreshImp != null) {
+            mRefreshImp!!.setRefreshState(RefreshImp.RELEASE)
+        }
+        springBack(mContentView)
+    }
+
 
     companion object {
         private const val MAX_BOUNCE_BACK_DURATION_MS = 300

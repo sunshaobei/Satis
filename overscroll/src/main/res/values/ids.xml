@@ -3,4 +3,5 @@
     <item type="id" name="tag_overscroll_delegate"/>
     <item type="id" name="tag_overscroll_offset_listener"/>
     <item type="id" name="tag_overscroll_refresh"/>
+    <item type="id" name="tag_overscroll_refresh_listener"/>
 </resources>

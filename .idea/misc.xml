@@ -5,6 +5,7 @@
       <map>
         <entry key="../../../../layout/custom_preview.xml" value="0.26666666666666666" />
         <entry key="../satis/app/src/main/res/layout/activity_binding.xml" value="0.1" />
+        <entry key="../satis/app/src/main/res/layout/activity_coordinator.xml" value="0.1" />
         <entry key="../satis/app/src/main/res/layout/activity_header_and_foot.xml" value="0.14356435643564355" />
         <entry key="../satis/app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="../satis/app/src/main/res/layout/activity_multi_type.xml" value="0.1" />
@@ -43,6 +44,7 @@
       </map>
     </option>
   </component>
+  <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>

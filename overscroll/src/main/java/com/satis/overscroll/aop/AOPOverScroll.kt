@@ -1,14 +1,12 @@
 package com.satis.overscroll.aop
 
-import android.os.Handler
-import android.util.Log
 import android.view.View
-import androidx.core.view.ViewCompat
 import com.satis.overscroll.OverScrollDelegate.Companion.createByTarget
 import com.satis.overscroll.OverScrollDelegate
 import androidx.recyclerview.widget.RecyclerView
 import androidx.core.widget.NestedScrollView
 import com.satis.overscroll.R
+import com.satis.overscroll.api.RefreshImp
 import kotlin.Throws
 import org.aspectj.lang.ProceedingJoinPoint
 
@@ -31,6 +29,9 @@ object AOPOverScroll {
         val target = joinPoint.target as View
         val overScrollDelegate = getOverScrollDelegate(target)
         overScrollDelegate?.run {
+            if (overScrollDelegate.mRefreshImp?.getRefreshState() == RefreshImp.REFRESHING){
+                return joinPoint.proceed()
+            }
             if (getOffset(target) != 0) {
                 if (startNestedScroll(args, target)) {
                     return true
@@ -60,28 +61,33 @@ object AOPOverScroll {
     @Throws(Throwable::class)
     fun dispatchNestedPreScroll(joinPoint: ProceedingJoinPoint): Any? {
         val args = joinPoint.args
-        val target = joinPoint.target
-        val b =
-            (getOverScrollDelegate(target)?.getOffset(target as View) == 0 && (joinPoint.proceed()) as Boolean)
-                    || dispatchNestedPreScroll(
-                args,
-                target
-            )
-        return b
+        val target = joinPoint.target as View
+        if (getOverScrollDelegate(target)?.mRefreshImp?.getRefreshState() == RefreshImp.REFRESHING){
+            return joinPoint.proceed()
+        }
+        return ((getOverScrollDelegate(target)?.getOffset(target) == 0 && (joinPoint.proceed()) as Boolean)
+                || dispatchNestedPreScroll(
+            args,
+            target
+        ))
     }
 
     private fun dispatchNestedPreScroll(
         args: Array<Any>,
-        target: Any,
+        target: View,
     ): Boolean {
+        val dx = args[0] as Int
+        val dy = args[1] as Int
+        val consumed = args[2] as IntArray
+        val scrollType = args[4] as Int
         getOverScrollDelegate(target)?.onNestedPreScroll(
-            target as View,
-            args[0] as Int,
-            args[1] as Int,
-            (args[2] as IntArray),
-            args[4] as Int
+            target,
+           dx,
+           dy,
+            consumed,
+            scrollType
         )
-        if ((args[2] as IntArray)[1] != 0 || (args[2] as IntArray)[0] != 0) {
+        if (consumed[1] != 0 || consumed[0] != 0) {
             return true
         }
         return false
@@ -92,16 +98,25 @@ object AOPOverScroll {
         val args = joinPoint.args
         val target = joinPoint.target as View
         val proceed = joinPoint.proceed()
-        val i = (args[6] as IntArray)[1]
+        val consumed = args[6] as IntArray
+        val i = consumed[1]  //y
         val overScrollDelegate = getOverScrollDelegate(target)
+        if (overScrollDelegate?.mRefreshImp?.getRefreshState() == RefreshImp.REFRESHING){
+            return joinPoint.proceed()
+        }
         if (i == 0 || overScrollDelegate?.getOffset(target) != 0) {
+            val dxConsumed = args[0] as Int
+            val dyConsumed = args[1] as Int
+            val dxUnconsumed = args[2] as Int
+            val dyUnconsumed = args[3] as Int
+            val scrollType = args[5] as Int
             overScrollDelegate?.onNestedScroll(
                 target ,
-                args[0] as Int,
-                args[1] as Int,
-                args[2] as Int,
-                args[3] as Int,
-                args[5] as Int
+                dxConsumed,
+                dyConsumed,
+                dxUnconsumed,
+                dyUnconsumed,
+                scrollType
             )
         }
         return proceed
@@ -112,21 +127,30 @@ object AOPOverScroll {
         val args = joinPoint.args
         val target = joinPoint.target
         val overScrollDelegate = getOverScrollDelegate(target)
+        val velocityX = args[0] as Float
+        val velocityY = args[1] as Float
+        if (overScrollDelegate?.mRefreshImp?.getRefreshState() == RefreshImp.REFRESHING){
+            return joinPoint.proceed()
+        }
         overScrollDelegate?.onNestedPreFling(
             target as View,
-            (args[0] as Float),
-            (args[1] as Float)
+            velocityX,
+            velocityY
         )
         return joinPoint.proceed()
     }
 
     @Throws(Throwable::class)
     fun stopNestedScroll(joinPoint: ProceedingJoinPoint): Any? {
-        val target = joinPoint.target
+        val target = joinPoint.target as View
         val args = joinPoint.args
         val overScrollDelegate = getOverScrollDelegate(target)
+        if (overScrollDelegate?.mRefreshImp?.getRefreshState() == RefreshImp.REFRESHING){
+            return joinPoint.proceed()
+        }
         if (overScrollDelegate != null && args.isNotEmpty()) {
-            overScrollDelegate.onStopNestedScroll((target as View), args[0] as Int)
+            val scrollType = args[0] as Int
+            overScrollDelegate.onStopNestedScroll(target, scrollType)
         }
         return joinPoint.proceed()
     }

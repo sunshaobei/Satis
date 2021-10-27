@@ -28,19 +28,19 @@ class OverScrollHorizontalDelegate(contentView: View) : OverScrollDelegate(conte
         return onNestedPreFlingInner(target!!, velocityX)
     }
 
-    override fun updateOffset(child: View, offset: Int) {
-        child.translationX = offset.toFloat()
+    override fun updateOffset(target: View, offset: Int,@ScrollDirection scrollDirection: Int) {
+        target.translationX = offset.toFloat()
     }
 
-    override fun getOffset(child: View): Int {
-        return child.translationX.toInt()
+    override fun getOffset(target: View): Int {
+        return target.translationX.toInt()
     }
 
-    override fun getMaxOffset(child: View): Int {
-        return child.width
+    override fun getMaxOffset(target: View): Int {
+        return target.width
     }
 
-    override fun getMinOffset(child: View): Int {
-        return -child.width
+    override fun getMinOffset(target: View): Int {
+        return -target.width
     }
 }
