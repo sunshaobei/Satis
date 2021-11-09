@@ -2,6 +2,7 @@ package com.satis.overscroll
 
 import android.animation.Animator
 import android.animation.ValueAnimator
+import android.util.Log
 import android.view.View
 import android.view.ViewConfiguration
 import android.view.animation.Animation
@@ -16,6 +17,7 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import androidx.core.math.MathUtils
 import com.satis.overscroll.api.RefreshImp
 import kotlin.math.abs
+import kotlin.math.log
 
 abstract class OverScrollDelegate(private val mContentView: View) : OverScrollImp {
     private val mSpringBackInterpolator: Interpolator = DecelerateInterpolator(0.8f)
@@ -94,6 +96,7 @@ abstract class OverScrollDelegate(private val mContentView: View) : OverScrollIm
     fun onNestedScrollInner(
         target: View, distanceUnconsumed: Int, type: Int
     ): Int {
+        Log.e("distanceUnconsumed","$distanceUnconsumed")
         if (distanceUnconsumed != 0) { // fix nested scroll bugs
             mContentView.parent.requestDisallowInterceptTouchEvent(true)
         }
@@ -107,7 +110,7 @@ abstract class OverScrollDelegate(private val mContentView: View) : OverScrollIm
                 return scroll(target, distanceUnconsumed, 0, getMaxOffset(target))
             } else { // fling
                 if (mOverScroller == null || !mOverScroller!!.computeScrollOffset()
-                    || Math.abs(mOverScroller!!.currVelocity) < Math.abs(
+                    || abs(mOverScroller!!.currVelocity) < abs(
                         getMinFlingVelocity(
                             this,
                             target,
@@ -132,7 +135,7 @@ abstract class OverScrollDelegate(private val mContentView: View) : OverScrollIm
                 return scroll(target, distanceUnconsumed, getMinOffset(target), 0)
             } else { // fling
                 if (mOverScroller == null || !mOverScroller!!.computeScrollOffset()
-                    || abs(mOverScroller!!.currVelocity) < Math.abs(
+                    || abs(mOverScroller!!.currVelocity) < abs(
                         getMinFlingVelocity(
                             this,
                             target,
