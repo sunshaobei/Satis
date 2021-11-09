@@ -11,12 +11,14 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/annotation" />
             <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/binding-core" />
             <option value="$PROJECT_DIR$/core" />
             <option value="$PROJECT_DIR$/overscroll" />
-            <option value="$PROJECT_DIR$/processor" />
             <option value="$PROJECT_DIR$/sliver" />
+            <option value="$PROJECT_DIR$/viewmodel-annotation" />
+            <option value="$PROJECT_DIR$/viewmodel-core" />
+            <option value="$PROJECT_DIR$/viewmodel-processor" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
