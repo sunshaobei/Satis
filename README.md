@@ -5,6 +5,6 @@
 
 ## [OverScroll](https://github.com/sunshaobei/Satis/tree/master/overscroll#readme) 原生支持OverScroll（滚动回弹效果）
 
-## [ViewModel](https://github.com/sunshaobei/Satis/tree/master/overscroll#readme)
+## [ViewModel](https://github.com/sunshaobei/Satis/tree/master/viewmodel-processor/README.md) 类eventbus 方式的Viewmode使用
 
 ## [Request]() 类Retrofit 请求
