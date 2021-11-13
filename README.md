@@ -7,6 +7,6 @@
 
 ## [ViewModel](https://github.com/sunshaobei/Satis/tree/master/viewmodel-processor/README.md) 类eventbus 方式的Viewmode使用
 
-## [Binding-core](https://github.com/sunshaobei/Satis/tree/master/viewmodel-processor/README.md) Databinding 自定义BindingAdapter 
+## [Binding-core](https://github.com/sunshaobei/Satis/tree/master/binding-core/README.md) Databinding 自定义BindingAdapter 
 
 ## [Request]() 类Retrofit 请求
