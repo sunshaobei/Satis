@@ -1,4 +1,4 @@
-##### 支持在布局layout中直接快速构建shape drawable
+##### 支持在databinding 布局layout中直接快速构建shape drawable
 
 
 具体使用方式如下
