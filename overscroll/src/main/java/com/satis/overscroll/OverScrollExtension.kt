@@ -8,6 +8,7 @@ import com.satis.overscroll.api.RefreshImp
 typealias RefreshCallback = () -> Unit
 typealias OverScrollOffsetChangeCallback = (View, Int) -> Unit
 
+@Suppress("UNCHECKED_CAST")
 fun RecyclerView.addOverScrollOffsetChangeListener(listener: OverScrollOffsetChangeCallback) {
     var tag = this.getTag(R.id.tag_overscroll_offset_listener)
     if (tag == null) {
@@ -17,6 +18,7 @@ fun RecyclerView.addOverScrollOffsetChangeListener(listener: OverScrollOffsetCha
     (tag as ArrayList<OverScrollOffsetChangeCallback>).add(listener)
 }
 
+@Suppress("UNCHECKED_CAST")
 fun RecyclerView.removeOverScrollOffsetChangeListener(listener: OverScrollOffsetChangeCallback) {
     var tag = this.getTag(R.id.tag_overscroll_offset_listener)
     if (tag != null) {

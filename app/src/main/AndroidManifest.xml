@@ -10,6 +10,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Satis">
         <activity
+            android:name=".viewmodel.TestActivity"
+            android:exported="false" />
+        <activity
+            android:name=".viewmodel.SatisViewModelActivity"
+            android:exported="false" />
+        <activity
             android:name=".overscroll.CoordinatorActivity"
             android:exported="false" />
         <activity

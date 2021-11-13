@@ -4,9 +4,6 @@ import android.R
 import android.annotation.SuppressLint
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.StateListDrawable
-import com.satis.binding.core.factory.GradientDrawableFactory
-import kotlin.jvm.JvmOverloads
-import com.satis.binding.core.factory.StateListDrawableFactory
 import com.satis.core.AppContext.context
 
 object StateListDrawableFactory {
@@ -16,8 +13,8 @@ object StateListDrawableFactory {
     @SuppressLint("UseCompatLoadingForDrawables")
     fun createPressDrawable(unPress: Int, pressed: Int): StateListDrawable {
         val drawable = StateListDrawable()
-        val normal: Drawable = context.resources.getDrawable(unPress)
-        val press: Drawable = context.resources.getDrawable(pressed)
+        val normal: Drawable = context.resources.getDrawable(unPress,context.theme)
+        val press: Drawable = context.resources.getDrawable(pressed,context.theme)
         drawable.addState(intArrayOf(R.attr.state_pressed), press)
         drawable.addState(intArrayOf(-R.attr.state_pressed), normal)
         return drawable
@@ -42,8 +39,8 @@ object StateListDrawableFactory {
     @SuppressLint("UseCompatLoadingForDrawables")
     fun createCheckDrawable(unCheck: Int, check: Int): StateListDrawable {
         val drawable = StateListDrawable()
-        val normal: Drawable = context.resources.getDrawable(unCheck)
-        val press: Drawable = context.resources.getDrawable(check)
+        val normal: Drawable = context.resources.getDrawable(unCheck,context.theme)
+        val press: Drawable = context.resources.getDrawable(check,context.theme)
         drawable.addState(intArrayOf(R.attr.state_checked), press)
         drawable.addState(intArrayOf(-R.attr.state_checked), normal)
         return drawable
@@ -55,6 +52,7 @@ object StateListDrawableFactory {
      * @param check
      * @return
      */
+    @SuppressLint
     fun createCheckDrawable(unCheck: Drawable?, check: Drawable?): StateListDrawable {
         val drawable = StateListDrawable()
         drawable.addState(intArrayOf(R.attr.state_checked), check)
@@ -71,8 +69,8 @@ object StateListDrawableFactory {
     @SuppressLint("UseCompatLoadingForDrawables")
     fun createSelectDrawable(unSelect: Int, select: Int): StateListDrawable {
         val drawable = StateListDrawable()
-        val normal: Drawable = context.resources.getDrawable(unSelect)
-        val press: Drawable = context.resources.getDrawable(select)
+        val normal: Drawable = context.resources.getDrawable(unSelect,context.theme)
+        val press: Drawable = context.resources.getDrawable(select,context.theme)
         drawable.addState(intArrayOf(R.attr.state_selected), press)
         drawable.addState(intArrayOf(-R.attr.state_selected), normal)
         return drawable

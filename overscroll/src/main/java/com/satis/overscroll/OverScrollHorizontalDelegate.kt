@@ -14,7 +14,7 @@ class OverScrollHorizontalDelegate(contentView: View) : OverScrollDelegate(conte
     override fun onNestedPreScroll(
         target: View?, dx: Int, dy: Int, consumed: IntArray, type: Int
     ) {
-        consumed[0] = onNestedPreScrollInner(target!!, dx, type)
+        consumed[0] = onNestedPreScrollInner(target!!, dx)
     }
 
     override fun onNestedScroll(

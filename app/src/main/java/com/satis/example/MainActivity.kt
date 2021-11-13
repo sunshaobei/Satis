@@ -16,11 +16,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         val binding =
             DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
-        val list = arrayListOf<String>("SLIVER","OVERSCROLL")
+        val list = MaineEntry.values().toList()
+
 
         binding.rv.satis(list) {
-            singleTypeItem<String>(R.layout.item){i,p,h->
-                h.setText(R.id.tv,i)
+            singleTypeItem<MaineEntry>(R.layout.item){ i, _, h->
+                h.setText(R.id.tv,i.name)
             }
             itemClick = { _,_,position->
                itemClick(list[position])
@@ -34,16 +35,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-   private fun itemClick(text:String){
-        when (text){
-            "SLIVER"->{
-                val intent = Intent( this@MainActivity, SliverActivity::class.java)
-                startActivity(intent)
-            }
-            "OVERSCROLL"->{
-                val intent = Intent( this@MainActivity, OverScrollActivity::class.java)
-                startActivity(intent)
-            }
-        }
+   private fun itemClick(maineEntry: MaineEntry){
+       val intent = Intent( this@MainActivity, maineEntry.aClass)
+       startActivity(intent)
     }
 }

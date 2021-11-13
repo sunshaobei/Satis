@@ -93,6 +93,7 @@ class SatisSliver(val recyclerView: RecyclerView, datas: List<Any>) {
     /**
      * 多类型判断选择器
      */
+    @Suppress("UNCHECKED_CAST")
     fun <T> selector(
         sel: TypeSelector<T>,
     ) {
@@ -110,7 +111,7 @@ class SatisSliver(val recyclerView: RecyclerView, datas: List<Any>) {
         @LayoutRes layoutId: Int,
         itemContent: (item: T, position: Int, holder: ViewHolder) -> Unit
     ) {
-        var defaultTypeItem = ListTypeItem<T>(layoutId)
+        val defaultTypeItem = ListTypeItem<T>(layoutId)
         defaultTypeItem.itemContent = itemContent
         adapter.addItemDelegate<T>(layoutId, defaultTypeItem)
     }
@@ -125,7 +126,7 @@ class SatisSliver(val recyclerView: RecyclerView, datas: List<Any>) {
         @LayoutRes layoutId: Int,
         itemContent: (item: T, position: Int, binding: K) -> Unit
     ) {
-        var listTypeBindingItem = ListTypeBindingItem<T,K>(layoutId)
+        val listTypeBindingItem = ListTypeBindingItem<T,K>(layoutId)
         listTypeBindingItem.itemContent = itemContent
         adapter.addItemDelegate<T>(layoutId, listTypeBindingItem)
     }
@@ -141,7 +142,7 @@ class SatisSliver(val recyclerView: RecyclerView, datas: List<Any>) {
         @LayoutRes layoutId: Int,
         itemContent: (item: T, position: Int, ViewHolder: ViewHolder) -> Unit,
     ) {
-        var multiTypeItem = ListTypeItem<T>(layoutId)
+        val multiTypeItem = ListTypeItem<T>(layoutId)
         multiTypeItem.itemContent = itemContent
         adapter.addItemDelegate<T>(layoutId, multiTypeItem)
     }
@@ -156,7 +157,7 @@ class SatisSliver(val recyclerView: RecyclerView, datas: List<Any>) {
         @LayoutRes layoutId: Int,
         itemContent: (item: Any, position: Int, holder: ViewHolder) -> Unit
     ) {
-        var multiTypeItem = ListTypeItem<Any>(layoutId)
+        val multiTypeItem = ListTypeItem<Any>(layoutId)
         multiTypeItem.itemContent = itemContent
         adapter.addItemDelegate<Any>(layoutId, multiTypeItem)
     }
@@ -171,7 +172,7 @@ class SatisSliver(val recyclerView: RecyclerView, datas: List<Any>) {
         @LayoutRes layoutId: Int,
         itemContent: (item: T, position: Int, binding: K) -> Unit
     ) {
-        var listTypeBindingItem = ListTypeBindingItem<T, K>(layoutId)
+        val listTypeBindingItem = ListTypeBindingItem<T, K>(layoutId)
         listTypeBindingItem.itemContent = itemContent
         adapter.addItemDelegate<T>(layoutId, listTypeBindingItem)
     }
@@ -186,7 +187,7 @@ class SatisSliver(val recyclerView: RecyclerView, datas: List<Any>) {
         @LayoutRes layoutId: Int,
         itemContent: (item: Any, position: Int, binding: K) -> Unit
     ) {
-        var listTypeBindingItem = ListTypeBindingItem<Any, K>(layoutId)
+        val listTypeBindingItem = ListTypeBindingItem<Any, K>(layoutId)
         listTypeBindingItem.itemContent = itemContent
         adapter.addItemDelegate<Any>(layoutId, listTypeBindingItem)
     }

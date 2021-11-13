@@ -19,7 +19,7 @@ open class HeaderAndFootWrapper(context: Context, datas: List<Any>) : EmptyWrapp
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         if (mHeaderViews[viewType] != null || mFootViews[viewType] != null) {
-            var o: View? = null
+            var o: View?
             o = mHeaderViews[viewType]
             if (o == null) {
                 o = mFootViews[viewType]
@@ -47,7 +47,7 @@ open class HeaderAndFootWrapper(context: Context, datas: List<Any>) : EmptyWrapp
     }
 
     private val realItemCount: Int
-        private get() = super.getItemCount()
+        get() = super.getItemCount()
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         if (isHeaderViewPos(position)) {
@@ -62,6 +62,7 @@ open class HeaderAndFootWrapper(context: Context, datas: List<Any>) : EmptyWrapp
         return headersCount + footersCount + realItemCount
     }
 
+    @Suppress("LABEL_NAME_CLASH")
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         WrapperUtils.onAttachedToRecyclerView( recyclerView) { layoutManager, oldLookup, position ->
             val viewType = getItemViewType(position)

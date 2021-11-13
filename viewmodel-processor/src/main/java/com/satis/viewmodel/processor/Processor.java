@@ -20,7 +20,7 @@ import javax.tools.Diagnostic;
  */
 @AutoService(javax.annotation.processing.Processor.class)
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
-@SupportedAnnotationTypes("Observe")
+@SupportedAnnotationTypes("com.satis.viewmodel.annotation.Observe")
 public class Processor extends AbstractProcessor {
     public static final String APT_PACKAGE = "com.satis.viewmodel.apt.";
 

@@ -43,8 +43,8 @@ task androidSourcesJar(type: Jar) {
 }
 
 ext {
-    PUBLISH_GROUP_ID = 'com.github.boybeak'
-    PUBLISH_VERSION = '0.1.3'
+    PUBLISH_GROUP_ID = 'io.github.sunshaobei'
+    PUBLISH_VERSION = '0.0.1'
 }
 
 ext["signing.keyId"] = ''

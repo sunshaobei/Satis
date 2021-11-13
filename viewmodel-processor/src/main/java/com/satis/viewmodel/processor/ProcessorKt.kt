@@ -20,7 +20,7 @@ import javax.tools.Diagnostic
  */
 @AutoService(Processor::class)
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
-@SupportedAnnotationTypes("Observe")
+@SupportedAnnotationTypes("com.satis.viewmodel.annotation.Observe")
 class ProcessorKt : AbstractProcessor() {
     private var mMassager: Messager? = null
     private var mElementUtils: Elements? = null

@@ -64,7 +64,7 @@ open class BaseMultiItemTypeAdapter(var mContext: Context, var datas: List<Any>)
 
     protected fun setListener(parent: ViewGroup?, viewHolder: ViewHolder, viewType: Int) {
         if (!mItemClickEnable) return
-        viewHolder.convertView.setOnClickListener { v: View ->
+        viewHolder.convertView.setOnClickListener { _: View ->
             if (mItemClick != null) {
                 val position = viewHolder.adapterPosition
                 mItemClick?.invoke(viewHolder, position,getListPosition(position))
@@ -75,7 +75,7 @@ open class BaseMultiItemTypeAdapter(var mContext: Context, var datas: List<Any>)
                 mBindingItemClick?.invoke(viewHolder.getBinding<ViewDataBinding>()!!, position,getListPosition(position))
             }
         }
-        viewHolder.convertView.setOnLongClickListener { v: View ->
+        viewHolder.convertView.setOnLongClickListener { _: View ->
             if (mItemLongClick != null) {
                 val position = viewHolder.adapterPosition
                 return@setOnLongClickListener mItemLongClick!!.invoke(

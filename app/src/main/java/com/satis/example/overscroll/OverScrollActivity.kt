@@ -23,7 +23,7 @@ class OverScrollActivity : AppCompatActivity() {
         val list = arrayListOf<String>("HORIZONTAL_SCROLL", "VERTICAL", "NESTED_SCROLL", "TEST")
 
         binding.rv.satis(list) {
-            singleTypeItem<String>(R.layout.item) { i, p, h ->
+            singleTypeItem<String>(R.layout.item) { i, _, h ->
                 h.setText(R.id.tv, i)
             }
             itemClick = { _, _, position ->

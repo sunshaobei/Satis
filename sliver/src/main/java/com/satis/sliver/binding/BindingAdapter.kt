@@ -18,7 +18,7 @@ object BindingAdapter {
     @BindingAdapter(value = ["items", "singleTypeItem", "bindingBR"])
     fun recyclerView(view: RecyclerView, items: List<Any>, singleTypeItem: Int, bindingBR: String) {
         view.satis(items) {
-            singleTypeItem<Any>(singleTypeItem) { o: Any?, integer: Int?, viewHolder: ViewHolder ->
+            singleTypeItem<Any>(singleTypeItem) { o: Any?, _: Int?, viewHolder: ViewHolder ->
                 try {
                     val forName = Class.forName(view.context.packageName + ".BR")
                     val declaredField = forName.getDeclaredField(bindingBR)

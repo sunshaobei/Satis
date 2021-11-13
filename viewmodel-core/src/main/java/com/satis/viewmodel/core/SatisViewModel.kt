@@ -16,6 +16,7 @@ object SatisViewModel {
         OBSERVERS.putAll(observerStore.store)
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun observe(
         lifecycleOwner: LifecycleOwner,
         ownerClass: Class<out LifecycleOwner>

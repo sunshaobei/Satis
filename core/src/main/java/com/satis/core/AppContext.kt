@@ -14,7 +14,7 @@ object AppContext {
      *
      * @return ApplicationContext
      */
-    lateinit var context: Application
+    lateinit var application: Application
         private set
 
     /**
@@ -24,8 +24,8 @@ object AppContext {
      */
     @JvmStatic
     fun init(application: Application) {
-        context = application
+        this.application = application
     }
 
-    inline val Any.context: Context get() = context
+    inline val Any.context: Context get() = application
 }

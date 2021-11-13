@@ -5,7 +5,6 @@ import android.animation.ValueAnimator
 import android.util.Log
 import android.view.View
 import android.view.ViewConfiguration
-import android.view.animation.Animation
 import android.view.animation.DecelerateInterpolator
 import android.view.animation.Interpolator
 import android.widget.OverScroller
@@ -17,7 +16,6 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import androidx.core.math.MathUtils
 import com.satis.overscroll.api.RefreshImp
 import kotlin.math.abs
-import kotlin.math.log
 
 abstract class OverScrollDelegate(private val mContentView: View) : OverScrollImp {
     private val mSpringBackInterpolator: Interpolator = DecelerateInterpolator(0.8f)
@@ -33,8 +31,10 @@ abstract class OverScrollDelegate(private val mContentView: View) : OverScrollIm
 
     val mRefreshImp: RefreshImp?
         get() = mContentView.getTag(R.id.tag_overscroll_refresh) as RefreshImp?
+    @Suppress("UNCHECKED_CAST")
     val mRefreshCallback: RefreshCallback?
         get() = mContentView.getTag(R.id.tag_overscroll_refresh_listener) as RefreshCallback?
+    @Suppress("UNCHECKED_CAST")
     val mOffsetListeners: ArrayList<OverScrollOffsetChangeCallback>?
         get() = mContentView.getTag(R.id.tag_overscroll_offset_listener) as ArrayList<OverScrollOffsetChangeCallback>?
 
@@ -69,7 +69,7 @@ abstract class OverScrollDelegate(private val mContentView: View) : OverScrollIm
     /**
      * @return consumed distance
      */
-    protected fun onNestedPreScrollInner(target: View, distance: Int, type: Int): Int {
+    protected fun onNestedPreScrollInner(target: View, distance: Int): Int {
         if (distance != 0) {
             val min: Int
             val max: Int
@@ -309,11 +309,11 @@ abstract class OverScrollDelegate(private val mContentView: View) : OverScrollIm
 
     private fun setOffset(target: View, offset: Int,@ScrollDirection scrollDirection: Int) {
         updateOffset(target, offset,scrollDirection)
-        updateRefreshOffset(target, offset)
+        updateRefreshOffset(offset)
         onOffsetChanged(this, target, getOffset(target))
     }
 
-    private fun updateRefreshOffset(target: View, offset: Int) {
+    private fun updateRefreshOffset(offset: Int) {
         mRefreshImp?.run {
             updateOffset(offset)
             if (offset>=getRefreshHeight()){

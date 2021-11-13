@@ -83,6 +83,7 @@ class ItemDelegateManager {
         }
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun convert(holder: ViewHolder, item: Any, position: Int) {
         if (itemMap.size == 0)
             throw IllegalArgumentException(

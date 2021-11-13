@@ -50,3 +50,17 @@ dependencies {
 repositories {
     mavenCentral()
 }
+
+ext {
+//    artifactId = "easy-safr" // module name of the library
+    PUBLISH_ARTIFACT_ID = "satis:sliver"
+}
+//apply from: '../deploy.gradle'
+//apply from: '../publish.gradle'
+//
+//afterEvaluate {
+//    generateReleaseBuildConfig.enabled = false
+//    generateDebugBuildConfig.enabled = false
+//    generateReleaseResValues.enabled = false
+//    generateDebugResValues.enabled = false
+//}

@@ -56,6 +56,7 @@ open class LoadMoreWrapper(mContext: Context, datas: List<Any>) : HeaderAndFootW
         return super.onCreateViewHolder(parent, viewType)
     }
 
+    @Suppress("LABEL_NAME_CLASH")
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         onAttachedToRecyclerView(recyclerView) { layoutManager: GridLayoutManager, oldLookup: SpanSizeLookup?, position: Int ->
             if (isShowLoadMore(position)) {

@@ -7,6 +7,7 @@ import java.lang.reflect.ParameterizedType
 
 class BaseFragment<T:BaseViewModel>: Fragment() {
     lateinit var mViewModel:T
+    @Suppress("UNCHECKED_CAST")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val genericArrayType = this::class.java.genericSuperclass

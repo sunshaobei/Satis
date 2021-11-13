@@ -20,7 +20,7 @@ open class EmptyWrapper(mContext: Context, datas: List<Any>) :
     private var mEmptyView: View? = null
     private var mEmptyLayoutId = 0
     private val isEmpty: Boolean
-        private get() = (mEmptyView != null || mEmptyLayoutId != 0) && super.getItemCount() == 0
+        get() = (mEmptyView != null || mEmptyLayoutId != 0) && super.getItemCount() == 0
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         if (isEmpty) {
@@ -38,6 +38,7 @@ open class EmptyWrapper(mContext: Context, datas: List<Any>) :
         return super.onCreateViewHolder(parent, viewType)
     }
 
+    @Suppress("LABEL_NAME_CLASH")
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         onAttachedToRecyclerView(recyclerView) { gridLayoutManager: GridLayoutManager, spanSizeLookup: SpanSizeLookup?, integer: Int? ->
             if (isEmpty) {

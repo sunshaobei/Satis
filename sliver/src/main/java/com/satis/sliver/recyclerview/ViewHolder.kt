@@ -36,6 +36,7 @@ class ViewHolder(private val mContext: Context, itemView: View) :
      * @param viewId
      * @return
      */
+    @Suppress("UNCHECKED_CAST")
     fun <T : View?> getView(viewId: Int): T? {
         var view = mViews[viewId]
         if (view == null) {
@@ -215,6 +216,7 @@ class ViewHolder(private val mContext: Context, itemView: View) :
         return this
     }
 
+    @Suppress("UNCHECKED_CAST")
     fun <T : ViewDataBinding?> getBinding(): T? {
         return binding as T?
     }

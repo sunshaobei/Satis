@@ -8,6 +8,7 @@ import java.util.HashMap
 
 open class BaseViewModel(application: Application) : AndroidViewModel(application) {
     private var mMutableLiveDataMap: MutableMap<String, BaseLiveData<Any?>> = HashMap(4)
+    @Suppress("UNCHECKED_CAST")
     fun <T> addObserver(
         owner: LifecycleOwner,
         tag: String,

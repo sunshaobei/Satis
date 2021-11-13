@@ -6,7 +6,6 @@ import androidx.core.widget.NestedScrollView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
-import java.util.*
 
 /**
  * 垂直方向上的弹性滑动和惯性滑动效果
@@ -23,7 +22,7 @@ class OverScrollVerticalDelegate(contentView: View) : OverScrollDelegate(content
     }
 
     override fun onNestedPreScroll(target: View?, dx: Int, dy: Int, consumed: IntArray, type: Int) {
-        consumed[1] = onNestedPreScrollInner(target!!, dy, type)
+        consumed[1] = onNestedPreScrollInner(target!!, dy)
     }
 
     override fun onNestedScroll(
@@ -65,7 +64,7 @@ class OverScrollVerticalDelegate(contentView: View) : OverScrollDelegate(content
         }
     }
 
-    override fun updateOffset(target: View, offset: Int,topback: Int) {
+    override fun updateOffset(target: View, offset: Int, scrollDirection: Int) {
         target.run {
             if (offset>0){
                 if (mPaddingTop == Int.MAX_VALUE){
@@ -93,15 +92,15 @@ class OverScrollVerticalDelegate(contentView: View) : OverScrollDelegate(content
 //        child.translationY = offset.toFloat()
     }
 
-    override fun getOffset(child: View): Int {
+    override fun getOffset(target: View): Int {
         return mOffset
     }
 
-    override fun getMaxOffset(child: View): Int {
-        return child.height
+    override fun getMaxOffset(target: View): Int {
+        return target.height
     }
 
-    override fun getMinOffset(child: View): Int {
-        return -child.height
+    override fun getMinOffset(target: View): Int {
+        return -target.height
     }
 }

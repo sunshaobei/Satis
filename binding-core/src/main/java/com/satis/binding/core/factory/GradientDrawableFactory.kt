@@ -49,12 +49,10 @@ object GradientDrawableFactory {
         if (strokeWidth > 0) {
             gradientDrawable.setStroke(strokeWidth.dp.toInt(), strokeColor)
         }
-        if (radius != null) {
-            if (radius.size == 1) {
-                gradientDrawable.cornerRadius = radius[0]
-            } else {
-                gradientDrawable.cornerRadii = radius
-            }
+        if (radius.size == 1) {
+            gradientDrawable.cornerRadius = radius[0]
+        } else {
+            gradientDrawable.cornerRadii = radius
         }
         return gradientDrawable
     }

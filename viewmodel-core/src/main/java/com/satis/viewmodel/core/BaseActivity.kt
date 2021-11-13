@@ -11,6 +11,7 @@ abstract class BaseActivity<T:BaseViewModel> :AppCompatActivity(){
         super.onCreate(savedInstanceState)
         initViewModel(this::class.java)
     }
+    @Suppress("UNCHECKED_CAST")
     private fun initViewModel(mClass:Class<*>){
         val genericArrayType = mClass.genericSuperclass
         if (genericArrayType is ParameterizedType){
