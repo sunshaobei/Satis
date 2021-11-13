@@ -1,8 +1,6 @@
 package com.satis.viewmodel.core
 
 import androidx.lifecycle.Observer
-import com.satis.viewmodel.core.BaseLiveData
-import com.satis.viewmodel.core.BaseObserver
 
 class ObserverWrapper<T>(private val liveData: BaseLiveData<*>, observer: Observer<in T>) :
     Observer<T> {

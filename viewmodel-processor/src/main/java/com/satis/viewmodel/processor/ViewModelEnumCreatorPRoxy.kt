@@ -43,7 +43,7 @@ class ViewModelEnumCreatorPRoxy {
 
     fun addEnum(typeElement: TypeElement) {
         val simpleName = typeElement.simpleName.toString()
-        val className = ClassName.get(Processor.Companion.APT_PACKAGE, "$simpleName\$Observe")
+        val className = ClassName.get(ProcessorKt.Companion.APT_PACKAGE, "$simpleName\$Observe")
         getBuilder()!!.addEnumConstant(
             simpleName.uppercase(Locale.getDefault()),
             TypeSpec.anonymousClassBuilder("\$T.class", className).build()

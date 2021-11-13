@@ -16,7 +16,7 @@ import javax.lang.model.util.Elements
  * date 2020/3/11
  * 创建Java文件代理类
  */
-class ObserveClassCreatorProxy(elementUtils: Elements, val typeElement: TypeElement) {
+class ObserveClassCreatorProxyKt(elementUtils: Elements, val typeElement: TypeElement) {
     val observeClassName: String
     private val mObserveElementMap: MutableMap<Observe, ExecutableElement> = HashMap()
     val packageName: String

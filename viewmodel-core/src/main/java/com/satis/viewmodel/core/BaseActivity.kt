@@ -3,7 +3,6 @@ package com.satis.viewmodel.core
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import java.lang.Exception
 import java.lang.reflect.ParameterizedType
 
 abstract class BaseActivity<T:BaseViewModel> :AppCompatActivity(){

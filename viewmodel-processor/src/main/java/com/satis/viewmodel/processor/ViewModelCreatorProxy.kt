@@ -11,7 +11,7 @@ class ViewModelCreatorProxy {
         val baseLiveData = ClassName.get("com.satis.viewmodel.core", "BaseLiveData")
         val builder = TypeSpec.classBuilder("SatisViewModel")
         builder.addModifiers(Modifier.PUBLIC)
-        val mtViewModel = ClassName.get(Processor.Companion.APT_PACKAGE, "SatisViewModel")
+        val mtViewModel = ClassName.get(ProcessorKt.Companion.APT_PACKAGE, "SatisViewModel")
         //静态private 成员变量
 //        addInstanceField(builder, mtViewModel);
 
@@ -30,7 +30,7 @@ class ViewModelCreatorProxy {
     }
 
     private fun addRegister(builder: TypeSpec.Builder, owner: ClassName) {
-        val modelEnum = ClassName.get(Processor.Companion.APT_PACKAGE, "SatisViewModelEnum")
+        val modelEnum = ClassName.get(ProcessorKt.Companion.APT_PACKAGE, "SatisViewModelEnum")
         val observeMethod = MethodSpec.methodBuilder("register")
             .addModifiers(Modifier.PUBLIC, Modifier.STATIC)
             .addParameter(owner, "host")
@@ -49,7 +49,7 @@ class ViewModelCreatorProxy {
     }
 
     private fun addUnregister(builder: TypeSpec.Builder, owner: ClassName) {
-        val modelEnum = ClassName.get(Processor.Companion.APT_PACKAGE, "SatisViewModelEnum")
+        val modelEnum = ClassName.get(ProcessorKt.Companion.APT_PACKAGE, "SatisViewModelEnum")
         val observeMethod = MethodSpec.methodBuilder("unRegister")
             .addModifiers(Modifier.PUBLIC)
             .addParameter(owner, "host")

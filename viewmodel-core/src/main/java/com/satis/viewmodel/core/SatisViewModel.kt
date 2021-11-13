@@ -1,7 +1,6 @@
 package com.satis.viewmodel.core
 
 import androidx.lifecycle.LifecycleOwner
-import java.lang.RuntimeException
 import java.lang.reflect.Constructor
 import java.util.LinkedHashMap
 
@@ -24,7 +23,7 @@ object SatisViewModel {
         var observeImp: Constructor<out Observer>? = OBSERVERS[ownerClass]
         //递归查询 父类订阅方法 由于是 activity 与fragment 所以 supperclass 没必要校验空
         val superclassName = ownerClass.superclass.name
-        if (!superclassName.startsWith("androidx.") && superclassName != "com.satis.viewmodel.core.BaseActivity") {
+        if (!superclassName.startsWith("androidx.") && superclassName != "BaseActivity") {
             ownerClass.superclass?.let {
                 observe(
                     lifecycleOwner,

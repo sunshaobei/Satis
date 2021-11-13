@@ -11,7 +11,7 @@ import java.util.LinkedHashMap
 import javax.lang.model.element.Modifier
 import javax.lang.model.element.TypeElement
 
-class ObserveStoreCreatorProxy {
+class ObserveStoreCreatorProxyKt {
     private lateinit var builder: TypeSpec.Builder
     private var storeMethod: MethodSpec.Builder? = null
     private fun initDefaultTypeBuilder() {
@@ -47,7 +47,7 @@ class ObserveStoreCreatorProxy {
     fun put(typeElement: TypeElement) {
         val host = ClassName.bestGuess(typeElement.qualifiedName.toString())
         val className = ClassName.get(
-            Processor.Companion.APT_PACKAGE,
+            ProcessorKt.Companion.APT_PACKAGE,
             typeElement.simpleName.toString() + "\$Observe"
         )
         storeMethod!!.addStatement("map.put(\$T.class,\$T.class.getConstructor())", host, className)

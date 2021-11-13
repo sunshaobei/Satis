@@ -20,16 +20,19 @@ import javax.tools.Diagnostic
  */
 @AutoService(Processor::class)
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
-@SupportedAnnotationTypes("com.satis.viewmodel.annotation.Observe")
-class Processor : AbstractProcessor() {
+@SupportedAnnotationTypes("Observe")
+class ProcessorKt : AbstractProcessor() {
     private var mMassager: Messager? = null
     private var mElementUtils: Elements? = null
-    private val mProxyObserveMap: MutableMap<String, ObserveClassCreatorProxy> = HashMap()
+    private val mProxyObserveMap: MutableMap<String, ObserveClassCreatorProxyKt> = HashMap()
+    private lateinit var mModuleName:String
     @Synchronized
     override fun init(processingEnv: ProcessingEnvironment) {
         super.init(processingEnv)
         mMassager = processingEnv.messager
         mElementUtils = processingEnv.elementUtils
+        mModuleName = processingEnv.options["module_name"].toString()
+        mMassager!!.printMessage(Diagnostic.Kind.ERROR, mModuleName)
     }
 
     override fun process(set: Set<TypeElement>, roundEnvironment: RoundEnvironment): Boolean {
@@ -44,7 +47,7 @@ class Processor : AbstractProcessor() {
             val fullClassName = classElement.qualifiedName.toString()
             var observeProxy = mProxyObserveMap[fullClassName]
             if (observeProxy == null) {
-                observeProxy = ObserveClassCreatorProxy(mElementUtils!!, classElement)
+                observeProxy = ObserveClassCreatorProxyKt(mElementUtils!!, classElement)
                 mProxyObserveMap[fullClassName] = observeProxy
             }
             val observe = executableElement.getAnnotation(Observe::class.java)
@@ -53,7 +56,7 @@ class Processor : AbstractProcessor() {
         //通过javapoet生成
 
 //        ViewModelEnumCreatorPRoxy viewModelEnumCreatorPRoxy = new ViewModelEnumCreatorPRoxy();
-        val observeStoreCreatorProxy = ObserveStoreCreatorProxy()
+        val observeStoreCreatorProxy = ObserveStoreCreatorProxyKt()
         for (key in mProxyObserveMap.keys) {
             try {
                 //　生成observer文件
@@ -64,7 +67,7 @@ class Processor : AbstractProcessor() {
 
                 //生成observe 文件
                 val javaFile = JavaFile.builder(
-                    APT_PACKAGE, proxyInfo.generateJavaCode(
+                    APT_PACKAGE+mModuleName, proxyInfo.generateJavaCode(
                         mMassager!!
                     )
                 ).build()
@@ -89,7 +92,7 @@ class Processor : AbstractProcessor() {
 //            enumFile.writeTo(processingEnv.getFiler());
 
             //生产 observer map
-            val storeFile = JavaFile.builder(APT_PACKAGE, observeStoreCreatorProxy.build()).build()
+            val storeFile = JavaFile.builder(APT_PACKAGE+mModuleName, observeStoreCreatorProxy.build()).build()
             storeFile.writeTo(processingEnv.filer)
             //            mMessager.printMessage(Diagnostic.Kind.NOTE,enumFile.toString());
         } catch (e: IOException) {

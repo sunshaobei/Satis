@@ -6,7 +6,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import java.util.HashMap
 
-class BaseViewModel(application: Application) : AndroidViewModel(application) {
+open class BaseViewModel(application: Application) : AndroidViewModel(application) {
     private var mMutableLiveDataMap: MutableMap<String, BaseLiveData<Any?>> = HashMap(4)
     fun <T> addObserver(
         owner: LifecycleOwner,
