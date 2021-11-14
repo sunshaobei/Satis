@@ -4,6 +4,9 @@ plugins {
     id 'kotlin-kapt'
 }
 apply plugin: 'kotlin-android'
+apply plugin: 'maven-publish'
+apply plugin: 'signing'
+
 
 android {
     compileSdk 30
@@ -37,30 +40,80 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.core:core-ktx:1.3.2'
+    implementation 'androidx.core:core-ktx:1.5.0'
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.google.android.material:material:1.3.0'
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     implementation "androidx.core:core-ktx:1.5.0"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 repositories {
     mavenCentral()
 }
 
-ext {
-//    artifactId = "easy-safr" // module name of the library
-    PUBLISH_ARTIFACT_ID = "satis:sliver"
-}
-//apply from: '../deploy.gradle'
-//apply from: '../publish.gradle'
+apply from: './publish.gradle'
+
+//publishing {
+//    publications {
+//        maven(MavenPublication) {
+//            groupId 'io.github.sunshaobei' //开通maven central时候定义的
+//            artifactId 'sliver' //资源名称
+//            version '0.1.0' //版本名称
+//            pom {
+//                name = 'satis-sliver'
+//                description = 'satis-sliver'
+//                url = 'https://github.com/sunshaobei/Satis'
 //
-//afterEvaluate {
-//    generateReleaseBuildConfig.enabled = false
-//    generateDebugBuildConfig.enabled = false
-//    generateReleaseResValues.enabled = false
-//    generateDebugResValues.enabled = false
+//                licenses {
+//                    license {
+//                        name = 'The Apache Software License, Version 2.0'
+//                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+//                        distribution = 'repo'
+//                        comments = 'A business-friendly OSS license'
+//                    }
+//                }
+//
+//                developers {
+//                    developer {
+//                        id = 'sunshaobei'
+//                        name = 'sunshaobei'
+//                        email = 'sunshaobei@foxmail.com'
+//                        url = 'https://github.com/sunshaobei/Satis'
+//                    }
+//                }
+//                scm {
+//                    url = 'https://github.com/sunshaobei/Satis'
+//                    connection = 'scm:git@https://github.com/sunshaobei/Satis.git'
+//                    developerConnection = 'scm:git@https://github.com/sunshaobei/Satis.git'
+//                }
+//            }
+//
+//
+//
+////            issueManagement {
+////                system = 'Github'
+////                url = 'https://github.com/sunshaobei/Satis'
+////            }
+////            artifact generateSourcesJar //需要上传的source jar
+////            artifact generateJavadoc //需要上传的java doc
+////            artifact makeJar //需要上传的资源jar路径或者是aar路径，这边可以填写一个生成jar的task，如makeJar方法就是一个生成jar的task
+//        }
+//    }
+//    repositories {
+//        maven {
+//            // 指定要上传的maven仓库
+//            url = 'https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/'
+//            //Maven仓库用户名和密码
+//            credentials {
+//                username 'sunshaobei'
+//                password '123Sun123...'
+//            }
+//        }
+//    }
+//}
+//signing {
+//    sign publishing.publications.maven //签名配置
 //}
