@@ -1,4 +1,4 @@
-package com.satis.viewmodel.processor;
+package com.satis.viewmodel.processor.java;
 
 import com.satis.viewmodel.annotation.Observe;
 import com.squareup.javapoet.TypeSpec;

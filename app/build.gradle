@@ -22,11 +22,11 @@ android {
 //                arguments = [module_name: project.getName()]
 //            }
 //        }
-        kapt{
-            arguments{
-                arg("module_name",project.getName())
-            }
-        }
+//        javaCompileOptions {
+//            annotationProcessorOptions {
+//                arguments = [ "module_name": project.getName() ]
+//            }
+//        }
     }
 
     dataBinding{
@@ -50,6 +50,14 @@ android {
 //https://blog.csdn.net/lalallallalla/article/details/111171422
     aspectjx {
         exclude 'versions.9'
+    }
+
+    kapt {
+        arguments {
+            arg("moduleName", project.getName())
+            includeCompileClasspath = true
+        }
+        generateStubs = true
     }
 }
 

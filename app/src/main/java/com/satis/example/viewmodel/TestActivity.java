@@ -15,8 +15,7 @@ public class TestActivity extends BaseActivity<ViewModel> {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_test);
-        SatisViewModel.INSTANCE.observe(this
-        );
+        SatisViewModel.INSTANCE.observe(this);
     }
     @Observe(tag = "sssss")
     public void onTest(String s){

@@ -1,4 +1,4 @@
-package com.satis.viewmodel.processor;
+package com.satis.viewmodel.processor.java;
 
 import com.google.auto.service.AutoService;
 import com.satis.viewmodel.annotation.Observe;
@@ -18,9 +18,9 @@ import javax.tools.Diagnostic;
  * date 2020/3/11
  * 注解处理器
  */
-@AutoService(javax.annotation.processing.Processor.class)
-@SupportedSourceVersion(SourceVersion.RELEASE_8)
-@SupportedAnnotationTypes("com.satis.viewmodel.annotation.Observe")
+//@AutoService(javax.annotation.processing.Processor.class)
+//@SupportedSourceVersion(SourceVersion.RELEASE_8)
+//@SupportedAnnotationTypes("com.satis.viewmodel.annotation.Observe")
 public class Processor extends AbstractProcessor {
     public static final String APT_PACKAGE = "com.satis.viewmodel.apt.";
 
@@ -36,7 +36,6 @@ public class Processor extends AbstractProcessor {
         mMessager = processingEnv.getMessager();
         mModuleName = processingEnv.getOptions().get("module_name");
         mElementUtils = processingEnv.getElementUtils();
-
     }
 
     @Override

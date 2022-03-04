@@ -1,4 +1,4 @@
-package com.satis.viewmodel.processor;
+package com.satis.viewmodel.processor.java;
 
 import com.squareup.javapoet.TypeSpec;
 import com.squareup.javapoet.MethodSpec;
