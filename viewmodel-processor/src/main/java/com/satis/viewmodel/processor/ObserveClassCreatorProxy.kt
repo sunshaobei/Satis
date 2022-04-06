@@ -1,4 +1,4 @@
-package com.satis.viewmodel.processor.kotlin
+package com.satis.viewmodel.processor
 
 import com.satis.viewmodel.annotation.Observe
 import com.satis.viewmodel.processor.utils.javaToKotlinType
@@ -7,16 +7,15 @@ import java.util.HashMap
 import javax.annotation.processing.Messager
 import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.TypeElement
+import javax.lang.model.element.VariableElement
 import javax.lang.model.util.Elements
-import kotlin.reflect.jvm.internal.impl.builtins.jvm.JavaToKotlinClassMap
-import kotlin.reflect.jvm.internal.impl.name.FqName
 
 /**
  * Created by ssb
  * date 2020/3/11
  * 创建Java文件代理类
  */
-class ObserveClassCreatorProxyKt(elementUtils: Elements, val typeElement: TypeElement) {
+class ObserveClassCreatorProxy(elementUtils: Elements, val typeElement: TypeElement) {
     private val observeClassName: String
     private val mObserveElementMap: MutableMap<Observe, ExecutableElement> = HashMap()
     private val packageName: String
@@ -32,12 +31,12 @@ class ObserveClassCreatorProxyKt(elementUtils: Elements, val typeElement: TypeEl
      *
      * @return
      */
-    fun generateJavaCode(): TypeSpec {
+    fun generateJavaCode(block:(String,ClassName)->Unit): TypeSpec {
         val className = ClassName("com.satis.viewmodel.core", "Observer")
         return TypeSpec.classBuilder(observeClassName)
             .addModifiers(KModifier.PUBLIC)
             .addSuperinterface(className)
-            .addFunction(generateMethods())
+            .addFunction(generateMethods(block))
             .build()
     }
 
@@ -45,7 +44,7 @@ class ObserveClassCreatorProxyKt(elementUtils: Elements, val typeElement: TypeEl
      * 加入Method
      * javapoet
      */
-    private fun generateMethods(): FunSpec {
+    private fun generateMethods(block: (String,ClassName) -> Unit): FunSpec {
         val host = ClassName.bestGuess(typeElement.qualifiedName.toString())
         val owner = ClassName("androidx.lifecycle", "LifecycleOwner")
         val funSpecBuilder = FunSpec.builder("observe")
@@ -58,27 +57,21 @@ class ObserveClassCreatorProxyKt(elementUtils: Elements, val typeElement: TypeEl
         for ((observe, value) in mObserveElementMap) {
             val method = value.simpleName.toString()
             val parameters = value.parameters
-            val className = parameters[0]!!.javaToKotlinType()!!
-//            val className = JavaToKotlinClassMap.INSTANCE.mapJavaToKotlin(FqName(parameterType.toString()))
-//                ?.asSingleFqName()?.asString()
-
-//            val className = ClassName.bestGuess(parameterType)
-            //            messager.printMessage(Diagnostic.Kind.NOTE,"process observe.tag():"+observe.tag());
-//            messager.printMessage(Diagnostic.Kind.NOTE,"process observe.isSticky():"+observe.isSticky());
-//            messager.printMessage(Diagnostic.Kind.NOTE,"process 方法参数名:"+parameterName);
-//            messager.printMessage(Diagnostic.Kind.NOTE,"process 方法参数类型:"+parameterType);
-            val observeName = method + count
+            val variableElement = parameters[0]!!
+            val className = variableElement.javaToKotlinType()!!
+            val paramTypeString = className.packageName.replace(".","_")+"_"+className.simpleName
+            block.invoke(method,className)
             funSpecBuilder.beginControlFlow(
-                "val $observeName = %T<%T>()",
+                "val ${method}_${paramTypeString} = object:%T<%T>",
                 observer,
                 className
             )
-                .beginControlFlow("fun onChanged(t:%T)",className)
+                .beginControlFlow("override fun onChanged(t:%T)",className)
                 .addStatement("(host as %T).$method(t)", host)
                 .endControlFlow()
                 .endControlFlow()
             funSpecBuilder.addStatement(
-                "(host as %T).mViewModel.addObserver(host,\"" + observe.tag + "\" ," + " %T(" + observeName + ")," + observe.sticky + ")",
+                "(host as %T).viewModel.addObserver(host,\"${method}_${paramTypeString}\" ," + " %T(${method}_${paramTypeString})," + observe.sticky + ")",
                 host,
                 baseObserver
             )

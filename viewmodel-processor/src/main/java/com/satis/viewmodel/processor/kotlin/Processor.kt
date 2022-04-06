@@ -2,7 +2,9 @@ package com.satis.viewmodel.processor.kotlin
 
 import com.google.auto.service.AutoService
 import com.satis.viewmodel.annotation.Observe
+import com.satis.viewmodel.processor.utils.getPackagePath
 import com.squareup.kotlinpoet.FileSpec
+import com.squareup.kotlinpoet.asTypeVariableName
 import java.util.*
 import javax.annotation.processing.*
 import javax.annotation.processing.Processor
@@ -17,13 +19,13 @@ import javax.tools.Diagnostic
  * date 2020/3/11
  * 注解处理器
  */
-@AutoService(Processor::class)
-@SupportedAnnotationTypes("com.satis.viewmodel.annotation.Observe")
-@SupportedSourceVersion(SourceVersion.RELEASE_8)
-class ProcessorKt : AbstractProcessor() {
+//@AutoService(Processor::class)
+//@SupportedAnnotationTypes("com.satis.viewmodel.annotation.Observe")
+//@SupportedSourceVersion(SourceVersion.RELEASE_8)
+class Processor : AbstractProcessor() {
     private var mMassager: Messager? = null
     private var mElementUtils: Elements? = null
-    private val mProxyObserveMap: MutableMap<String, ObserveClassCreatorProxyKt> = HashMap()
+    private val mProxyObserveMap: MutableMap<String, ObserveClassCreatorProxy> = HashMap()
     private lateinit var mModuleName: String
 
     override fun init(processingEnv: ProcessingEnvironment) {
@@ -46,7 +48,7 @@ class ProcessorKt : AbstractProcessor() {
             val fullClassName = classElement.qualifiedName.toString()
             var observeProxy = mProxyObserveMap[fullClassName]
             if (observeProxy == null) {
-                observeProxy = ObserveClassCreatorProxyKt(mElementUtils!!, classElement)
+                observeProxy = ObserveClassCreatorProxy(mElementUtils!!, classElement)
                 mProxyObserveMap[fullClassName] = observeProxy
             }
             val observe = executableElement.getAnnotation(Observe::class.java)
@@ -54,8 +56,8 @@ class ProcessorKt : AbstractProcessor() {
         }
         //通过javapoet生成
 
-//        ViewModelEnumCreatorPRoxy viewModelEnumCreatorPRoxy = new ViewModelEnumCreatorPRoxy();
-        val observeStoreCreatorProxy = ObserveStoreCreatorProxyKt(mModuleName)
+        val createKtx = ObserveKtxCreatorProxy()
+        val observeStoreCreatorProxy = ObserveStoreCreatorProxy(mModuleName)
         for (key in mProxyObserveMap.keys) {
             try {
                 //　生成observer文件
@@ -63,9 +65,11 @@ class ProcessorKt : AbstractProcessor() {
                 //以activity命名的枚举
                 observeStoreCreatorProxy.put(proxyInfo!!.typeElement)
                 //生成observe 文件
-                val typeSpec = proxyInfo.generateJavaCode()
+                val typeSpec = proxyInfo.generateJavaCode{methodName,paramType->
+                    createKtx.addFun(proxyInfo.typeElement,methodName,paramType)
+                }
                 val fileSpec = FileSpec.builder(
-                    "$APT_PACKAGE.$mModuleName", typeSpec.name!!)
+                    getPackagePath(proxyInfo.typeElement), typeSpec.name!!)
                     .addType(typeSpec)
                     .build()
                 fileSpec.writeTo(processingEnv.filer)
@@ -75,6 +79,16 @@ class ProcessorKt : AbstractProcessor() {
                 mMassager!!.printMessage(Diagnostic.Kind.ERROR, "process error!!!..." + e.message)
             }
         }
+
+        try {
+            val ktxType = createKtx.typeSpec.build()
+            val fileSpec = FileSpec.builder("$APT_PACKAGE.$mModuleName",ktxType.name!!).addType(ktxType).build()
+            fileSpec.writeTo(processingEnv.filer)
+            fileSpec.writeTo(System.out)
+        }catch (e:Exception){
+
+        }
+
         observeStoreCreatorProxy.endMethod()
         try {
             //生产 observer map

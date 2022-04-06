@@ -1,14 +1,33 @@
-//dependencyResolutionManagement {
-//    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-//    repositories {
-//        google()
-//        mavenCentral()
-//        maven { url 'https://maven.aliyun.com/nexus/content/groups/public/'}
-//        maven { url 'https://maven.aliyun.com/nexus/content/repositories/jcenter' }
-//        maven { url 'https://maven.aliyun.com/nexus/content/repositories/google' }
-//        maven { url 'https://maven.aliyun.com/nexus/content/repositories/gradle-plugin' }
-//    }
-//}
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        google()
+        mavenCentral()
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+//        maven {
+//            url RELEASE_URL
+//            credentials {
+//                username MAVEN_NAME
+//                password MAVEN_PASSWORD
+//            }
+//            allowInsecureProtocol = true
+//        }
+//        maven {
+//            url SNAPSHOT_URL
+//            credentials {
+//                username MAVEN_NAME
+//                password MAVEN_PASSWORD
+//            }
+//            allowInsecureProtocol = true
+//        }
+    }
+}
 rootProject.name = "Satis"
 include ':app'
 include ':sliver'

@@ -1,5 +1,6 @@
 package com.satis.viewmodel.processor.kotlin
 
+import com.satis.viewmodel.processor.utils.getPackagePath
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import java.lang.Exception
@@ -7,7 +8,7 @@ import java.lang.reflect.Constructor
 import java.util.LinkedHashMap
 import javax.lang.model.element.TypeElement
 
-class ObserveStoreCreatorProxyKt(private val moduleName: String) {
+class ObserveStoreCreatorProxy(private val moduleName: String) {
     private lateinit var typeSpecBuilder: TypeSpec.Builder
     private var getFunSpecBuilder: FunSpec.Builder? = null
     private var propertySpec: PropertySpec.Builder? = null
@@ -55,7 +56,7 @@ class ObserveStoreCreatorProxyKt(private val moduleName: String) {
     fun put(typeElement: TypeElement) {
         val host = ClassName.bestGuess(typeElement.qualifiedName.toString())
         val className = ClassName(
-            ProcessorKt.APT_PACKAGE + "." + moduleName,
+                    getPackagePath(typeElement),
             typeElement.simpleName.toString() + "_Observe"
         )
         getFunSpecBuilder!!.addStatement("map.put(%T::class.java,%T::class.java.getConstructor())",

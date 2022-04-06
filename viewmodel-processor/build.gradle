@@ -10,8 +10,8 @@ java {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    implementation kotlinx.reflect
+    implementation kotlinx.stdlib
     compileOnly "com.google.auto.service:auto-service:1.0-rc7"
     kapt "com.google.auto.service:auto-service:1.0-rc7"
 //    implementation 'com.google.auto:auto-common:0.11'

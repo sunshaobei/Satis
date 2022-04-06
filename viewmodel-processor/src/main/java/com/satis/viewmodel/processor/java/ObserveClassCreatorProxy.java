@@ -83,15 +83,14 @@ public class ObserveClassCreatorProxy{
 //            messager.printMessage(Diagnostic.Kind.NOTE,"process observe.isSticky():"+observe.isSticky());
 //            messager.printMessage(Diagnostic.Kind.NOTE,"process 方法参数名:"+parameterName);
 //            messager.printMessage(Diagnostic.Kind.NOTE,"process 方法参数类型:"+parameterType);
-            String observeName = method+count;
-            methodBuilder.beginControlFlow("$T<"+parameterType+"> "+observeName+" = new $T<"+parameterType+">()",observer,observer)
+            methodBuilder.beginControlFlow("$T<"+parameterType+"> "+method+" = new $T<"+parameterType+">()",observer,observer)
                     .addCode("@$T\n",Override.class)
                     .beginControlFlow("public void onChanged("+parameterType+" t)")
                     .addStatement( "(($T)host)."+method+"(t)",host)
                     .endControlFlow()
                     .endControlFlow()
                     .addCode(";\n");
-            methodBuilder.addStatement("(($T)host).mViewModel.addObserver(host,\"" + observe.tag() + "\" ,"+"new $T("+observeName+"),"+observe.sticky()+")",host,baseObserver);
+            methodBuilder.addStatement("(($T)host).mViewModel.addObserver(host,\"" + method + "\" ,"+"new $T("+method+"),"+observe.sticky()+")",host,baseObserver);
             count++;
         }
         return methodBuilder.build();

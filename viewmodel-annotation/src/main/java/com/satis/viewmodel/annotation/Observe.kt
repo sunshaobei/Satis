@@ -6,4 +6,4 @@ package com.satis.viewmodel.annotation
     AnnotationTarget.PROPERTY_SETTER
 )
 @kotlin.annotation.Retention(AnnotationRetention.RUNTIME)
-annotation class Observe(val tag:String = "",val sticky: Boolean = false)
+annotation class Observe(val sticky: Boolean = false)

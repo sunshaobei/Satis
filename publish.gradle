@@ -1,0 +1,53 @@
+apply plugin: 'maven-publish'
+apply plugin: 'signing'
+
+
+task generateSourcesJar(type: Jar){
+    archiveClassifier.set('sources')
+    if (JAVA_LIB == "true"){
+        from sourceSets.main.allSource
+    }else {
+        from android.sourceSets.main.java.srcDirs
+    }
+}
+
+
+afterEvaluate {
+    publishing {
+        repositories {
+            maven {
+                url = (POM_VERSION.endsWith('SNAPSHOT') || POM_VERSION.endsWith('snapshot')) ? SNAPSHOT_URL : RELEASE_URL
+                System.out.println("上传至："+url)
+                credentials {
+                    username = ossrhUsername
+                    password = ossrhPassword
+                }
+            }
+        }
+        publications {
+            // Creates a Maven publication called "release".
+            if (JAVA_LIB == "true"){
+                java(MavenPublication) {
+                    // Applies the component for the release build variant.
+                    from components.java
+                    // You can then customize attributes of the publication as shown below.
+                    groupId = POM_GROUPID
+                    artifactId = POM_ARTIFACTID
+                    version = POM_VERSION
+                    artifact generateSourcesJar
+                }
+            }else {
+                release(MavenPublication) {
+                    // Applies the component for the release build variant.
+                    from components.release
+                    // You can then customize attributes of the publication as shown below.
+                    groupId = POM_GROUPID
+                    artifactId = POM_ARTIFACTID
+                    version = POM_VERSION
+                    artifact generateSourcesJar
+                }
+            }
+
+        }
+    }
+}

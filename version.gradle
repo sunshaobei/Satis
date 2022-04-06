@@ -1,0 +1,163 @@
+def versions = [:]
+versions.kotlin = '1.5.10'
+versions.androidx_annotation = '1.2.0'
+versions.androidx_recyclerview = '1.2.0'
+versions.androidx_core_ktx = '1.1.0'
+versions.androidx_appcompat = '1.3.0'
+versions.androidx_constraintlayout = '2.0.4'
+versions.androidx_support_dynamic_animation = '1.0.0'
+versions.androidx_legacy_support_v4 ='1.0.0'
+versions.androidx_multidex = '2.0.1'
+versions.coroutines = '1.5.1'
+versions.lifecycle = '2.3.1'
+versions.arouter = '1.5.2'
+versions.retrofit = '2.9.0'
+versions.google_gson = '2.8.9'
+ext.versions = versions
+
+
+
+/**
+ * 编译版本相关 gradle 配置
+ */
+
+def build_versions = [:]
+build_versions.min_sdk = 19
+build_versions.compile_sdk = 30
+build_versions.target_sdk = 30
+build_versions.android_gradle_plugin = '3.5.0'
+ext.build_versions = build_versions
+
+
+def classpath_deps = [:]
+classpath_deps.android_gradle_plugin = "com.android.tools.build:gradle:$build_versions.android_gradle_plugin"
+classpath_deps.kotlin_plugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin"
+// 作业帮隐私修改插件
+ext.classpath_deps = classpath_deps
+
+/**
+ * androidx 包名依赖
+ */
+def androidx = [:]
+androidx.appcompat = "androidx.appcompat:appcompat:$versions.androidx_appcompat"
+androidx.constraintlayout = "androidx.constraintlayout:constraintlayout:$versions.androidx_constraintlayout"
+androidx.support_dynamic_animation = "androidx.dynamicanimation:dynamicanimation:$versions.androidx_support_dynamic_animation"
+androidx.legacy_support_v4 = "androidx.legacy:legacy-support-v4:$versions.androidx_legacy_support_v4"
+androidx.recyclerview = "androidx.recyclerview:recyclerview:$versions.androidx_recyclerview"
+androidx.annotation = "androidx.annotation:annotation:$versions.androidx_annotation"
+androidx.core_ktx = "androidx.core:core-ktx:${versions.androidx_core_ktx}"
+androidx.junit = "androidx.test.ext:junit:1.1.3"
+androidx.espresso_core = "androidx.test.espresso:espresso-core:3.4.0"
+androidx.multidex = "androidx.multidex:multidex:$versions.androidx_multidex"
+ext.androidx = androidx
+
+/**
+ * 单元测试
+ */
+ext.junit = 'junit:junit:4.13.2'
+
+/**
+ *  google 包名依赖
+ */
+def google = [:]
+google.material = 'com.google.android.material:material:1.0.0'
+google.gson = "com.google.code.gson:gson:$versions.google_gson"
+google.findbugs = "com.google.code.findbugs:jsr305:3.0.2"
+ext.google = google
+
+
+
+def kotlinx = [:]
+kotlinx.stdlib = "org.jetbrains.kotlin:kotlin-stdlib:$versions.kotlin"
+kotlinx.reflect = "org.jetbrains.kotlin:kotlin-reflect:$versions.kotlin"
+kotlinx.stdlib_common = "org.jetbrains.kotlin:kotlin-stdlib-common:$versions.kotlin"
+kotlinx.stdlib_jdk7 = "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$versions.kotlin"
+kotlinx.stdlib_jdk8 = "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$versions.kotlin"
+kotlinx.test = "org.jetbrains.kotlin:kotlin-test-junit:$versions.kotlin"
+kotlinx.plugin = "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin"
+kotlinx.allopen = "org.jetbrains.kotlin:kotlin-allopen:$versions.kotlin"
+ext.kotlinx = kotlinx
+
+
+/**
+ *  协程
+ */
+def coroutines = [:]
+coroutines.android = "org.jetbrains.kotlinx:kotlinx-coroutines-android:$versions.coroutines"
+coroutines.core = "org.jetbrains.kotlinx:kotlinx-coroutines-core:$versions.coroutines"
+coroutines.test = "org.jetbrains.kotlinx:kotlinx-coroutines-test:$versions.coroutines"
+ext.coroutines = coroutines
+
+/**
+ *  mvvm
+ */
+def lifecycle=[:]
+lifecycle.viewmodel_ktx = "androidx.lifecycle:lifecycle-viewmodel-ktx:$versions.lifecycle"
+lifecycle.livedata_core_ktx = "androidx.lifecycle:lifecycle-livedata-core-ktx:$versions.lifecycle"
+lifecycle.livedata_ktx =  "androidx.lifecycle:lifecycle-livedata-ktx:$versions.lifecycle"
+lifecycle.runtime_ktx = "androidx.lifecycle:lifecycle-runtime-ktx:$versions.lifecycle"
+ext.lifecycle = lifecycle
+
+/**
+ * 阿里路由
+ */
+def arouter =[:]
+arouter.api = "com.alibaba:arouter-api:$versions.arouter"
+arouter.kapt =  "com.alibaba:arouter-compiler:$versions.arouter"
+ext.arouter = arouter
+
+
+def okhttp3 = [:]
+okhttp3.runtime = "com.squareup.okhttp3:okhttp:4.9.3"
+okhttp3.okio = "com.squareup.okio:okio:2.8.0"
+ext.okhttp3 = okhttp3
+
+def retrofit = [:]
+retrofit.runtime = "com.squareup.retrofit2:retrofit:$versions.retrofit"
+retrofit.gson = "com.squareup.retrofit2:converter-gson:$versions.retrofit"
+retrofit.mock = "com.squareup.retrofit2:retrofit-mock:$versions.retrofit"
+retrofit.scalars =  "com.squareup.retrofit2:converter-scalars:$versions.retrofit"
+retrofit.rxjava =  "com.squareup.retrofit2:adapter-rxjava:$versions.retrofit"
+ext.retrofit = retrofit
+
+/**
+ * 强制依赖版本，避免版本冲突
+ */
+def forceDeps = [
+        androidx.core_ktx,
+        androidx.appcompat,
+        androidx.annotation,
+        androidx.multidex,
+        google.material,
+        google.gson,
+        androidx.recyclerview,
+        androidx.constraintlayout,
+        kotlinx.stdlib,
+        kotlinx.stdlib_common,
+        kotlinx.stdlib_jdk7,
+        kotlinx.stdlib_jdk8,
+        coroutines.android,
+        okhttp3.runtime,
+        okhttp3.okio,
+        retrofit.runtime,
+        retrofit.gson ,
+        retrofit.scalars,
+        retrofit.rxjava,
+]
+ext.forceDeps = forceDeps
+
+/**
+ * groovy fun
+ * @param project gradle 编译项目
+ * @return
+ */
+def forceDependencies(Project project){
+    project.configurations.all {
+        resolutionStrategy{
+            forceDeps.forEach{
+                force it
+            }
+        }
+    }
+}
+ext.forceDependencies = this.&forceDependencies

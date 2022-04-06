@@ -5,6 +5,7 @@ import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import javax.lang.model.element.AnnotationMirror
 import javax.lang.model.element.AnnotationValue
 import javax.lang.model.element.Element
+import javax.lang.model.element.TypeElement
 import javax.lang.model.type.TypeMirror
 import kotlin.reflect.jvm.internal.impl.builtins.jvm.JavaToKotlinClassMap
 import kotlin.reflect.jvm.internal.impl.name.FqName
@@ -75,4 +76,11 @@ private fun getAnnotationValue(annotationMirror: AnnotationMirror, key: String):
     } else {
         av.value as TypeMirror
     }
+}
+
+fun getPackagePath(typeElement: TypeElement):String{
+    val qualifiedName = typeElement.qualifiedName
+    val simpleName = typeElement.simpleName
+    val packageRoot = qualifiedName.toString().replace(".$simpleName", "")
+    return packageRoot
 }
