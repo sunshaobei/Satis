@@ -9,13 +9,16 @@ import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.TypeElement
 import javax.lang.model.element.VariableElement
 import javax.lang.model.util.Elements
+import javax.tools.Diagnostic
+import kotlin.reflect.jvm.internal.impl.builtins.jvm.JavaToKotlinClassMap
+import kotlin.reflect.jvm.internal.impl.name.FqName
 
 /**
  * Created by ssb
  * date 2020/3/11
  * 创建Java文件代理类
  */
-class ObserveClassCreatorProxy(elementUtils: Elements, val typeElement: TypeElement) {
+class ObserveClassCreatorProxy(elementUtils: Elements,val logger:Messager?, val typeElement: TypeElement) {
     private val observeClassName: String
     private val mObserveElementMap: MutableMap<Observe, ExecutableElement> = HashMap()
     private val packageName: String
@@ -31,7 +34,7 @@ class ObserveClassCreatorProxy(elementUtils: Elements, val typeElement: TypeElem
      *
      * @return
      */
-    fun generateJavaCode(block:(String,ClassName)->Unit): TypeSpec {
+    fun generateJavaCode(block:(String,TypeName)->Unit): TypeSpec {
         val className = ClassName("com.satis.viewmodel.core", "Observer")
         return TypeSpec.classBuilder(observeClassName)
             .addModifiers(KModifier.PUBLIC)
@@ -44,7 +47,7 @@ class ObserveClassCreatorProxy(elementUtils: Elements, val typeElement: TypeElem
      * 加入Method
      * javapoet
      */
-    private fun generateMethods(block: (String,ClassName) -> Unit): FunSpec {
+    private fun generateMethods(block: (String,TypeName) -> Unit): FunSpec {
         val host = ClassName.bestGuess(typeElement.qualifiedName.toString())
         val owner = ClassName("androidx.lifecycle", "LifecycleOwner")
         val funSpecBuilder = FunSpec.builder("observe")
@@ -58,20 +61,28 @@ class ObserveClassCreatorProxy(elementUtils: Elements, val typeElement: TypeElem
             val method = value.simpleName.toString()
             val parameters = value.parameters
             val variableElement = parameters[0]!!
-            val className = variableElement.javaToKotlinType()!!
-            val paramTypeString = className.packageName.replace(".","_")+"_"+className.simpleName
-            block.invoke(method,className)
+            val typeName = variableElement.asType().asTypeName().javaToKotlinType() as ParameterizedTypeName
+            logger?.printMessage(Diagnostic.Kind.NOTE,"typeName----$typeName")
+//            val className = typeName.toString()
+            val rawType = typeName.rawType
+            logger?.printMessage(Diagnostic.Kind.NOTE,"rawType----$rawType")
+            val typeArguments = typeName.typeArguments
+            logger?.printMessage(Diagnostic.Kind.NOTE,"typeArguments----$typeArguments")
+            val paramTypeString = rawType.toString().replace(".","_")+ if (typeArguments.isNotEmpty()){
+                "_${typeArguments[0].toString().replace(".","_").replace(" ","_").trim()}"
+            }else{""}
+            block.invoke(method,typeName)
             funSpecBuilder.beginControlFlow(
                 "val ${method}_${paramTypeString} = object:%T<%T>",
                 observer,
-                className
+                typeName
             )
-                .beginControlFlow("override fun onChanged(t:%T)",className)
+                .beginControlFlow("override fun onChanged(t:%T)",typeName)
                 .addStatement("(host as %T).$method(t)", host)
                 .endControlFlow()
                 .endControlFlow()
             funSpecBuilder.addStatement(
-                "(host as %T).viewModel.addObserver(host,\"${method}_${paramTypeString}\" ," + " %T(${method}_${paramTypeString})," + observe.sticky + ")",
+                "(host as %T).viewModel.addObserver(host,\"${method}_${typeName.toString().replace(" ","_")}\" ," + " %T(${method}_${paramTypeString})," + observe.sticky + ")",
                 host,
                 baseObserver
             )

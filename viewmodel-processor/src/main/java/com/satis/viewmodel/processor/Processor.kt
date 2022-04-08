@@ -47,7 +47,7 @@ class Processor : AbstractProcessor() {
             val fullClassName = classElement.qualifiedName.toString()
             var observeProxy = mProxyObserveMap[fullClassName]
             if (observeProxy == null) {
-                observeProxy = ObserveClassCreatorProxy(mElementUtils!!, classElement)
+                observeProxy = ObserveClassCreatorProxy(mElementUtils!!,mLogger, classElement)
                 mProxyObserveMap[fullClassName] = observeProxy
             }
             val observe = executableElement.getAnnotation(Observe::class.java)

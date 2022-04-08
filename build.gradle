@@ -2,9 +2,10 @@
 buildscript {
     apply from: "version.gradle"
     apply from: "base.gradle"
-//    dependencies {
-//        classpath 'com.hujiang.aspectjx:gradle-android-plugin-aspectjx:2.0.10'
-//    }
+    dependencies {
+        classpath 'com.hujiang.aspectjx:gradle-android-plugin-aspectjx:2.0.10'
+        classpath "org.jetbrains.dokka:dokka-gradle-plugin:1.4.10.2"
+    }
 }
 
 plugins {

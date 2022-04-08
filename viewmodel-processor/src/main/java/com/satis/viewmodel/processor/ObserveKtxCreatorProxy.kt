@@ -4,7 +4,6 @@ import com.satis.viewmodel.processor.utils.javaToKotlinType
 import com.squareup.kotlinpoet.*
 import javax.annotation.processing.ProcessingEnvironment
 import javax.lang.model.element.TypeElement
-import javax.lang.model.element.VariableElement
 import javax.lang.model.type.DeclaredType
 
 /**
@@ -14,7 +13,7 @@ class ObserveKtxCreatorProxy(processingEnv: ProcessingEnvironment) {
     val types = processingEnv.typeUtils
     val typeSpec = TypeSpec.objectBuilder("ObserveKtx")
     private val funDataList = ArrayList<FunData>()
-    fun addFun(typeElement: TypeElement, methodName: String, paramType: ClassName) {
+    fun addFun(typeElement: TypeElement, methodName: String, paramType: TypeName) {
         funDataList.forEach {
             if (it.methodName == methodName && it.paramType == paramType) {
                 return
@@ -34,12 +33,18 @@ class ObserveKtxCreatorProxy(processingEnv: ProcessingEnvironment) {
             funSpec.addModifiers(KModifier.INLINE)
             funSpec.receiver(typeMirror.asTypeName())
             funSpec.addParameter("arg", paramType)
-            val paramTypeString = paramType.packageName.replace(".","_")+"_"+paramType.simpleName
-            funSpec.addCode("setValue(\"${methodName}_${paramTypeString}\",arg)")
+            funSpec.addCode("setValue(\"${methodName}_${paramType.toString().replace(" ","_")}\",arg)")
             typeSpec.addFunction(funSpec.build())
+
+            val funSpec2 = FunSpec.builder("io$methodName")
+            funSpec2.addModifiers(KModifier.INLINE)
+            funSpec2.receiver(typeMirror.asTypeName())
+            funSpec2.addParameter("arg", paramType)
+            funSpec2.addCode("postValue(\"${methodName}_${paramType.toString().replace(" ","_")}\",arg)")
+            typeSpec.addFunction(funSpec2.build())
         }
     }
 }
 
-data class FunData(val methodName: String, val paramType: ClassName)
+data class FunData(val methodName: String, val paramType: TypeName)
 
