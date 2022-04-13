@@ -39,9 +39,9 @@
                 android:id="@+id/rv"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                items="@{items}"
-                singleTypeItem="@{@layout/item_over_scroll}"
-                bindingBR='@{"item"}'
+                datas="@{items}"
+                layoutId="@{@layout/item_over_scroll}"
+                brStr='@{"item"}'
                 />
 
             <TextView

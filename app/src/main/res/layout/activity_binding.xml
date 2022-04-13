@@ -20,9 +20,9 @@
         android:scrollbarStyle="outsideOverlay"
         android:scrollbars="vertical"
         android:scrollbarAlwaysDrawVerticalTrack="true"
-        items="@{items}"
-        singleTypeItem="@{@layout/item_binding}"
-        bindingBR='@{"item2"}'
+        datas="@{items}"
+        layoutId="@{@layout/item_binding}"
+        brStr='@{"item2"}'
         />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

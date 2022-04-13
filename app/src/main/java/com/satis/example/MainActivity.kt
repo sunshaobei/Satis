@@ -5,11 +5,9 @@ import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.databinding.DataBindingUtil
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.satis.example.databinding.ActivityMainBinding
-import com.satis.example.overscroll.OverScrollActivity
-import com.satis.example.sliver.SliverActivity
-import com.satis.sliver.recyclerview.DividerItemDecoration
-import com.satis.sliver.satis
+import com.satis.sliver.sliver
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -19,9 +17,14 @@ class MainActivity : AppCompatActivity() {
         val list = MaineEntry.values().toList()
 
 
-        binding.rv.satis(list) {
-            singleTypeItem<MaineEntry>(R.layout.item){ i, _, h->
-                h.setText(R.id.tv,i.name)
+        binding.rv.sliver {
+            datas = list
+            item<MaineEntry>{
+                layoutId = R.layout.item
+                layoutManager = LinearLayoutManager(this@MainActivity)
+                itemContent = { i, _, h->
+                    h.setText(R.id.tv,i.name)
+                }
             }
             itemClick = { _,_,position->
                itemClick(list[position])
