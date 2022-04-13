@@ -8,12 +8,11 @@ import androidx.collection.SparseArrayCompat
 import android.view.ViewGroup
 import com.satis.sliver.recyclerview.ViewHolder
 import com.satis.sliver.utils.WrapperUtils
-import java.util.ArrayList
 
 /**
  * Created by sunsh on 18/5/30.
  */
-open class HeaderAndFootWrapper(context: Context, datas: List<Any>) : EmptyWrapper(context,datas) {
+open class HeaderAndFootWrapper(context: Context) : EmptyWrapper(context) {
     private val mHeaderViews = SparseArrayCompat<View>()
     private val mFootViews = SparseArrayCompat<View>()
 
@@ -26,7 +25,7 @@ open class HeaderAndFootWrapper(context: Context, datas: List<Any>) : EmptyWrapp
             }
             var holder: ViewHolder? = null
             if (o is View) {
-                holder = createViewHolder(parent.context, (o as View?)!!)
+                holder = createViewHolder((o as View?)!!)
             }
             return holder!!
         }

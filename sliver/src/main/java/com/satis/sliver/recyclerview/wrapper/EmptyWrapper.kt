@@ -15,8 +15,8 @@ import com.satis.sliver.recyclerview.ViewHolder
 /**
  * Created by sunsh on 18/5/30.
  */
-open class EmptyWrapper(mContext: Context, datas: List<Any>) :
-    BaseMultiItemTypeAdapter(mContext, datas) {
+open class EmptyWrapper(mContext: Context) :
+    BaseMultiItemTypeAdapter(mContext) {
     private var mEmptyView: View? = null
     private var mEmptyLayoutId = 0
     private val isEmpty: Boolean
@@ -25,10 +25,9 @@ open class EmptyWrapper(mContext: Context, datas: List<Any>) :
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         if (isEmpty) {
             val holder: ViewHolder = if (mEmptyView != null) {
-                createViewHolder(parent.context, mEmptyView!!)
+                createViewHolder(mEmptyView!!)
             } else {
                 createViewHolder(
-                    parent.context,
                     parent,
                     mEmptyLayoutId
                 )

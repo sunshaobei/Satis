@@ -5,7 +5,6 @@ import android.util.SparseArray
 import androidx.databinding.ViewDataBinding
 import android.graphics.Bitmap
 import android.annotation.SuppressLint
-import android.content.Context
 import android.graphics.Paint
 import android.os.Build
 import android.view.animation.AlphaAnimation
@@ -19,16 +18,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
 import androidx.databinding.DataBindingUtil
+import com.satis.core.AppContext.context
 import java.lang.Exception
 
 /**
  * Created by sunsh on 18/5/30.
  */
-class ViewHolder(private val mContext: Context, itemView: View) :
+class ViewHolder(itemView: View) :
     RecyclerView.ViewHolder(itemView) {
     private val mViews: SparseArray<View?>
     val convertView: View
-    private var binding: ViewDataBinding? = null
+    private lateinit var binding: ViewDataBinding
 
     /**
      * 通过viewId获取控件
@@ -37,13 +37,13 @@ class ViewHolder(private val mContext: Context, itemView: View) :
      * @return
      */
     @Suppress("UNCHECKED_CAST")
-    fun <T : View?> getView(viewId: Int): T? {
+    fun <T : View> getView(viewId: Int): T {
         var view = mViews[viewId]
         if (view == null) {
             view = convertView.findViewById(viewId)
             mViews.put(viewId, view)
         }
-        return view as T?
+        return view as T
     }
     /****以下为辅助方法 */
     /**
@@ -97,7 +97,7 @@ class ViewHolder(private val mContext: Context, itemView: View) :
 
     fun setTextColorRes(viewId: Int, textColorRes: Int): ViewHolder {
         val view = getView<TextView>(viewId)!!
-        view.setTextColor(mContext.resources.getColor(textColorRes))
+        view.setTextColor(context.resources.getColor(textColorRes))
         return this
     }
 
@@ -224,29 +224,30 @@ class ViewHolder(private val mContext: Context, itemView: View) :
     companion object {
         @JvmStatic
         fun createViewHolder(
-            context: Context,
             itemView: View
         ): ViewHolder {
-            return ViewHolder(context, itemView)
+            return ViewHolder( itemView)
         }
 
         @JvmStatic
         fun createViewHolder(
-            context: Context,
             parent: ViewGroup?, layoutId: Int
         ): ViewHolder {
             val itemView = LayoutInflater.from(context).inflate(
                 layoutId, parent,
                 false
             )
-            return ViewHolder(context, itemView)
+            return ViewHolder( itemView)
         }
     }
 
     init {
         try {
             //容错处理 非bindinglayout
-            binding = DataBindingUtil.bind(itemView)
+            val viewDataBinding = DataBindingUtil.bind<ViewDataBinding>(itemView)
+            viewDataBinding?.let {
+                binding = it
+            }
         } catch (ignored: Exception) {
         }
         convertView = itemView

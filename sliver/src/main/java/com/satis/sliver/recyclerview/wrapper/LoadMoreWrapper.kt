@@ -15,10 +15,10 @@ import com.satis.sliver.recyclerview.ViewHolder
 /**
  * Created by sunsh on 18/5/30.
  */
-open class LoadMoreWrapper(mContext: Context, datas: List<Any>) : HeaderAndFootWrapper(mContext, datas) {
+open class LoadMoreWrapper(mContext: Context) : HeaderAndFootWrapper(mContext) {
     private var mLoadMoreView: View? = null
     private var mLoadMoreLayoutId = 0
-    var mLoadMoreCallback:LoadMoreCallback ? = null
+    var mLoadMoreCallback: LoadMoreCallback? = null
     var mLoadMoreState = LoadMoreState.LoadComplete
     private val  mLoadMoreStateManager = LoadMoreStateManager(this)
 
@@ -40,12 +40,10 @@ open class LoadMoreWrapper(mContext: Context, datas: List<Any>) : HeaderAndFootW
         if (viewType == ITEM_TYPE_LOAD_MORE) {
             val holder: ViewHolder = if (mLoadMoreView != null) {
                 createViewHolder(
-                    parent.context,
                     mLoadMoreView!!
                 )
             } else {
                 createViewHolder(
-                    parent.context,
                     parent,
                     mLoadMoreLayoutId
                 )

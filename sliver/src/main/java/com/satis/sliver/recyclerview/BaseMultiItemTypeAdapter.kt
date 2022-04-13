@@ -6,14 +6,18 @@ import androidx.recyclerview.widget.RecyclerView
 import com.satis.sliver.item.ItemDelegateManager
 import android.view.ViewGroup
 import androidx.databinding.ViewDataBinding
-import com.satis.sliver.*
-import com.satis.sliver.item.BaseTypeItem
+import com.satis.sliver.BindingItemClick
+import com.satis.sliver.BindingItemLongClick
+import com.satis.sliver.ItemClick
+import com.satis.sliver.ItemLongClick
+import com.satis.sliver.item.TypeItem
 
 /**
  * Created by sunsh on 18/5/30.
  */
-open class BaseMultiItemTypeAdapter(var mContext: Context, var datas: List<Any>) :
+open class BaseMultiItemTypeAdapter(var mContext: Context) :
     RecyclerView.Adapter<ViewHolder>() {
+    var datas: List<Any> = ArrayList()
     var mItemDelegateManager: ItemDelegateManager = ItemDelegateManager()
     private var mItemClickEnable = false
     var mItemClick: ItemClick? = null
@@ -37,10 +41,6 @@ open class BaseMultiItemTypeAdapter(var mContext: Context, var datas: List<Any>)
             field = value
         }
 
-    fun setTypeSelector(typeSelector: TypeSelector<Any>) {
-        mItemDelegateManager.selector = typeSelector
-    }
-
     override fun getItemViewType(position: Int): Int {
         return if (!useItemViewDelegateManager()) super.getItemViewType(position) else mItemDelegateManager.getItemViewType(
             datas[position],
@@ -49,16 +49,15 @@ open class BaseMultiItemTypeAdapter(var mContext: Context, var datas: List<Any>)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val baseTypeItem = mItemDelegateManager.getItemViewDelegate(viewType)
-        val layoutId = baseTypeItem.layoutId
-        val holder = ViewHolder.createViewHolder(mContext, parent, layoutId)
+        val typeItem = mItemDelegateManager.getItemViewDelegate(viewType)
+        val holder = typeItem.viewHolder
         onViewHolderCreated(holder, holder.convertView)
         setListener(parent, holder, viewType)
         return holder
     }
 
     fun onViewHolderCreated(holder: ViewHolder?, itemView: View?) {}
-    fun convert(holder: ViewHolder, t: Any,position: Int) {
+    fun convert(holder: ViewHolder, t: Any, position: Int) {
         mItemDelegateManager.convert(holder, t, position)
     }
 
@@ -108,21 +107,20 @@ open class BaseMultiItemTypeAdapter(var mContext: Context, var datas: List<Any>)
         return datas.size
     }
 
-    fun <T> addItemDelegate(layout: Int, baseTypeItem: BaseTypeItem): BaseMultiItemTypeAdapter {
-        mItemDelegateManager.addDelegate(layout, baseTypeItem)
+    fun <T> addItemDelegate( typeItem: TypeItem<T>): BaseMultiItemTypeAdapter {
+        mItemDelegateManager.addDelegate(typeItem)
         return this
     }
 
     fun <T> addItemDelegate(
         viewType: Int,
-        layout: Int,
-        itemViewDelegate: BaseTypeItem
+        typeItem: TypeItem<T>
     ): BaseMultiItemTypeAdapter {
-        mItemDelegateManager.addDelegate(viewType, layout, itemViewDelegate)
+        mItemDelegateManager.addDelegate(viewType, typeItem)
         return this
     }
 
-    fun useItemViewDelegateManager(): Boolean {
+    private fun useItemViewDelegateManager(): Boolean {
         return mItemDelegateManager.itemViewDelegateCount > 0
     }
 

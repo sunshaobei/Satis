@@ -9,7 +9,7 @@ import org.aspectj.lang.ProceedingJoinPoint
 import com.satis.overscroll.aop.AOPOverScroll
 
 @Aspect
-class AOPTest {
+open class AOPTest {
 
 //    @Around( "execution(* androidx.recyclerview.widget.RecyclerView.draw(..))")
 //    @Throws(Throwable::class)

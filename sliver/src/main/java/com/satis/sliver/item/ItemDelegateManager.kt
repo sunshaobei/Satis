@@ -12,56 +12,63 @@ import java.lang.NullPointerException
  */
 class ItemDelegateManager {
     //    var delegates: SparseArrayCompat<TypeItem?> = SparseArrayCompat()
-    var itemMap = ArrayMap<Int, TypeItem>()
-    var typeMap = ArrayMap<Int, TypeItem>()
-    var selector: TypeSelector<Any>? = null
+    private var itemMap = ArrayMap<TypeItem<Any>, Int>()
+    private var typeMap = ArrayMap<Int, TypeItem<Any>>()
+    private var typeSelectorMap = ArrayMap<TypeSelector<Any>, Int>()
+    val selectors by lazy {
+        ArrayList<TypeSelector<Any>>()
+    }
     val itemViewDelegateCount: Int
         get() = itemMap.size
 
-    fun addDelegate(layout: Int, baseTypeItem: BaseTypeItem): ItemDelegateManager {
+    fun <T> addDelegate(typeItem: TypeItem<T>): ItemDelegateManager {
         val viewType = itemMap.size
-        addDelegate(viewType, layout, baseTypeItem)
+        addDelegate(viewType, typeItem)
         return this
     }
 
-    fun addDelegate(viewType: Int, layout: Int, baseTypeItem: BaseTypeItem): ItemDelegateManager {
-        require(itemMap[layout] == null) {
+    @Suppress("UNCHECKED_CAST")
+    fun <T> addDelegate(viewType: Int, typeItem: TypeItem<T>): ItemDelegateManager {
+        require(typeMap[viewType] == null) {
             ("An ItemViewDelegate is already registered for the viewType = "
                     + viewType
                     + ". Already registered ItemViewDelegate is "
-                    + itemMap[layout])
+                    + typeMap[viewType])
         }
-        itemMap[layout] = TypeItem(viewType, baseTypeItem)
-        typeMap[viewType] = TypeItem(layout, baseTypeItem)
+        typeMap[viewType] = typeItem as TypeItem<Any>
+        typeItem.selector?.let {
+            selectors.add(it)
+            typeSelectorMap[it] = viewType
+        }
+        itemMap[typeItem] = viewType
         return this
     }
 
-    fun removeDelegate(baseTypeItem: BaseTypeItem?): ItemDelegateManager {
-        if (baseTypeItem == null) {
+    fun removeDelegate(typeItem: TypeItem<Any>?): ItemDelegateManager {
+        if (typeItem == null) {
             throw NullPointerException("ItemViewDelegate is null")
         }
-        for (i in 0 until itemMap.size) {
-            val typeItem = itemMap.valueAt(i)
-            if (typeItem!!.baseTypeItem === baseTypeItem) {
-                itemMap.removeAt(i)
-                typeMap.removeAt(i)
-                break
-            }
+        val indexOfKey = itemMap.indexOfKey(typeItem)
+        if (indexOfKey >= 0) {
+            itemMap.removeAt(indexOfKey)
+            typeMap.removeAt(indexOfKey)
+            typeSelectorMap.removeAt(indexOfKey)
         }
         return this
     }
 
     fun removeDelegate(itemType: Int): ItemDelegateManager {
-        val indexToRemove = itemMap.indexOfKey(itemType)
+        val indexToRemove = typeMap.indexOfKey(itemType)
         if (indexToRemove >= 0) {
             itemMap.removeAt(indexToRemove)
             typeMap.removeAt(indexToRemove)
+            typeSelectorMap.removeAt(indexToRemove)
         }
         return this
     }
 
     fun getItemViewType(item: Any, position: Int): Int {
-        if (itemMap.size == 0){
+        if (itemMap.size == 0) {
             throw IllegalArgumentException(
                 "No ItemViewDelegateManager added that matches position=$position in data source"
             )
@@ -69,17 +76,20 @@ class ItemDelegateManager {
         return if (itemMap.size == 1) {
             typeMap.keyAt(0)
         } else {
-            if (selector == null){
+            if (selectors.isEmpty()) {
                 throw IllegalArgumentException(
                     "TypeSelector didn't set"
                 )
             }
-            val layoutId = selector!!.invoke(item, position)
-            val type = itemMap[layoutId]?.tag
-                ?: throw IllegalArgumentException(
-                    "No ItemViewDelegateManager added that matches position=$position in data source"
-                )
-            type
+            selectors.forEach {
+                if (it.invoke(item)) {
+                    return typeSelectorMap[it]!!
+                }
+            }
+            throw IllegalArgumentException(
+                "No ItemViewDelegateManager added that matches position=$position in data source"
+            )
+
         }
     }
 
@@ -90,23 +100,21 @@ class ItemDelegateManager {
                 "No ItemViewDelegateManager added that matches position=$position in data source"
             )
         val itemViewType = getItemViewType(item, position)
-        val baseTypeItem = typeMap[itemViewType]!!.baseTypeItem
-        if (baseTypeItem is ListTypeItem<*>){
-            baseTypeItem as ListTypeItem<Any>
-            baseTypeItem.itemContent!!.invoke(item,position,holder)
+        val typeItem = typeMap[itemViewType]!!
+        if (typeItem is ListTypeItem<*>) {
+            typeItem as ListTypeItem<Any>
+            typeItem.itemContent?.invoke(item, position, holder)
             return
-        }else if (baseTypeItem is ListTypeBindingItem<*,*>){
-            baseTypeItem as ListTypeBindingItem<Any,ViewDataBinding>
-            baseTypeItem.itemContent!!.invoke(item,position,holder.getBinding<ViewDataBinding>()!!)
+        } else if (typeItem is ListTypeBindingItem<*, *>) {
+            typeItem as ListTypeBindingItem<Any, ViewDataBinding>
+            typeItem.itemContent?.invoke(item,
+                position,
+                holder.getBinding<ViewDataBinding>()!!)
             holder.getBinding<ViewDataBinding>()!!.executePendingBindings()
         }
     }
 
-    fun getItemViewDelegate(viewType: Int): BaseTypeItem {
-        return typeMap[viewType]!!.baseTypeItem
-    }
-
-    fun getItemViewLayoutId(viewType: Int): Int {
-        return getItemViewDelegate(viewType).layoutId
+    fun getItemViewDelegate(viewType: Int): TypeItem<Any> {
+        return typeMap[viewType]!!
     }
 }

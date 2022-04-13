@@ -1,9 +1,18 @@
 apply plugin: 'maven-publish'
 apply plugin: 'signing'
 
-task androidSourcesJar(type: Jar) {
+task generateSourcesJar(type: Jar) {
     archiveClassifier.set('sources')
-    from android.sourceSets.main.java.srcDirs
+    if (JAVA_LIB == "true"){
+        from sourceSets.main.allSource
+    }else {
+        from android.sourceSets.main.java.srcDirs
+    }
+}
+
+
+task javadocsJar(type: Jar, dependsOn: generateSourcesJar) {
+    archiveClassifier.set('javadoc')
 }
 
 ext {
@@ -25,6 +34,7 @@ if (secretPropsFile.exists()) {
     p.load(new FileInputStream(secretPropsFile))
     p.each { name, value ->
         ext[name] = value
+        println value
     }
 } else {
     println "No props file, loading env vars"
@@ -34,46 +44,83 @@ afterEvaluate {
 
     publishing {
         publications {
-            release(MavenPublication) {
-                // The coordinates of the library, being set from variables that
-                // we'll set up in a moment
-                from components.release
-                groupId PUBLISH_GROUP_ID
-                artifactId PUBLISH_ARTIFACT_ID
-                version PUBLISH_VERSION
 
-                // Two artifacts, the `aar` and the sources
-//            artifact("$buildDir/outputs/aar/${project.getName()}-release.aar")
-
-//                artifact './build/outputs/aar/sliver-release.aar'
-                artifact androidSourcesJar
-                // Self-explanatory metadata for the most part
-                pom {
-                    name = 'satis-sliver'
-                    description = 'satis-sliver'
-                    url = 'https://github.com/sunshaobei/Satis'
-
-                    licenses {
-                        license {
-                            name = 'The Apache Software License, Version 2.0'
-                            url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
-                            distribution = 'repo'
-                            comments = 'A business-friendly OSS license'
-                        }
-                    }
-
-                    developers {
-                        developer {
-                            id = 'sunshaobei'
-                            name = 'sunshaobei'
-                            email = 'sunshaobei@foxmail.com'
-                            url = 'https://github.com/sunshaobei/Satis'
-                        }
-                    }
-                    scm {
+            if (JAVA_LIB == "true"){
+                java(MavenPublication) {
+                    // Applies the component for the release build variant.
+                    from components.java
+                    // You can then customize attributes of the publication as shown below.
+                    groupId = POM_GROUPID
+                    artifactId = POM_ARTIFACTID
+                    version = POM_VERSION
+                    artifact generateSourcesJar
+                    artifact javadocsJar
+                    pom {
+                        name = POM_ARTIFACTID
+                        description = POM_ARTIFACTID
                         url = 'https://github.com/sunshaobei/Satis'
-                        connection = 'scm:git@https://github.com/sunshaobei/Satis.git'
-                        developerConnection = 'scm:git@https://github.com/sunshaobei/Satis.git'
+
+                        licenses {
+                            license {
+                                name = 'The Apache Software License, Version 2.0'
+                                url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                                distribution = 'repo'
+                                comments = 'A business-friendly OSS license'
+                            }
+                        }
+
+                        developers {
+                            developer {
+                                id = 'sunshaobei'
+                                name = 'sunshaobei'
+                                email = 'sunshaobei@foxmail.com'
+                                url = 'https://github.com/sunshaobei/Satis'
+                            }
+                        }
+                        scm {
+                            url = 'https://github.com/sunshaobei/Satis'
+                            connection = 'scm:git@https://github.com/sunshaobei/Satis.git'
+                            developerConnection = 'scm:git@https://github.com/sunshaobei/Satis.git'
+                        }
+                    }
+                }
+            }else {
+                release(MavenPublication) {
+                    // Applies the component for the release build variant.
+                    from components.release
+                    // You can then customize attributes of the publication as shown below.
+                    groupId = POM_GROUPID
+                    artifactId = POM_ARTIFACTID
+                    version = POM_VERSION
+                    artifact generateSourcesJar
+                    artifact javadocsJar
+                    pom {
+                        name = POM_ARTIFACTID
+                        description = POM_ARTIFACTID
+                        url = 'https://github.com/sunshaobei/Satis'
+
+                        licenses {
+                            license {
+                                name = 'The Apache Software License, Version 2.0'
+                                url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                                distribution = 'repo'
+                                comments = 'A business-friendly OSS license'
+                            }
+                        }
+
+                        developers {
+                            developer {
+                                id = 'sunshaobei'
+                                name = 'sunshaobei'
+                                email = 'sunshaobei@foxmail.com'
+                                url = 'https://github.com/sunshaobei/Satis'
+                            }
+                        }
+                        scm {
+                            url = 'https://github.com/sunshaobei/Satis'
+                            connection = 'scm:git@https://github.com/sunshaobei/Satis.git'
+                            developerConnection = 'scm:git@https://github.com/sunshaobei/Satis.git'
+                        }
                     }
                 }
             }
@@ -81,26 +128,20 @@ afterEvaluate {
         repositories {
             // The repository to publish to, Sonatype/MavenCentral
             maven {
-                // This is an arbitrary name, you may also use "mavencentral" or
-                // any other name that's descriptive for you
-                name = "mavencentral"
-                def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
-                def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
-                // You only need this if you want to publish snapshots, otherwise just set the URL
-                // to the release repo directly
-                url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
-                // The username and password we've fetched earlier
+                url = (POM_VERSION.endsWith('SNAPSHOT') || POM_VERSION.endsWith('snapshot')) ? SNAPSHOT_URL : RELEASE_URL
+                System.out.println("上传至："+url)
                 credentials {
-                    username ossrhUsername
-                    password ossrhPassword
+                    username = ossrhUsername
+                    password = ossrhPassword
                 }
+            }
+            signing {
+                sign publishing.publications
             }
         }
     }
 }
-signing {
-    sign publishing.publications
-}
+
 
 
 // 58584D12

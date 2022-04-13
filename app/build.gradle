@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    id 'com.hujiang.android-aspectjx'
     id 'kotlin-kapt'
 }
 
@@ -37,9 +38,9 @@ android {
 
 }
 //https://blog.csdn.net/lalallallalla/article/details/111171422
-//aspectjx {
-//    exclude 'versions.9'
-//}
+aspectjx {
+    exclude 'versions.9'
+}
 
 kapt {
     arguments {
