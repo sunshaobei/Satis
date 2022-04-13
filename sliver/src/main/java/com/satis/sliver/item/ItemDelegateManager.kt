@@ -82,7 +82,7 @@ class ItemDelegateManager {
                 )
             }
             selectors.forEach {
-                if (it.invoke(item)) {
+                if (it.invoke(item,position)) {
                     return typeSelectorMap[it]!!
                 }
             }

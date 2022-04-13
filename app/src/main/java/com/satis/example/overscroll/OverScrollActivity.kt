@@ -5,10 +5,11 @@ import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.databinding.DataBindingUtil
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.satis.example.*
 import com.satis.example.databinding.ActivityOverScrollBinding
 import com.satis.example.sliver.SingleTypeActivity
-import com.satis.sliver.satis
+import com.satis.sliver.sliver
 
 class OverScrollActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,9 +23,14 @@ class OverScrollActivity : AppCompatActivity() {
             )
         val list = arrayListOf<String>("HORIZONTAL_SCROLL", "VERTICAL", "NESTED_SCROLL", "TEST")
 
-        binding.rv.satis(list) {
-            singleTypeItem<String>(R.layout.item) { i, _, h ->
-                h.setText(R.id.tv, i)
+        binding.rv.sliver {
+            datas = list
+            layoutManager = LinearLayoutManager(this@OverScrollActivity)
+            item<String> {
+                    layoutId = R.layout.item
+                   itemContent = { i, _, h ->
+                       h.setText(R.id.tv, i)
+                   }
             }
             itemClick = { _, _, position ->
                 itemClick(list[position])

@@ -5,12 +5,13 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.TextView
 import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.satis.example.R
 import com.satis.sliver.footView
 import com.satis.sliver.headerView
 import com.satis.sliver.recyclerview.wrapper.LoadMoreState
-import com.satis.sliver.satis
+import com.satis.sliver.sliver
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -25,10 +26,15 @@ class HeaderAndFootActivity : AppCompatActivity() {
         }
         val rv = findViewById<RecyclerView>(R.id.rv)
 
-        rv.satis(list){
-            singleTypeItem<String>(R.layout.item_single_type){ item, position, holder->
-                holder.setText(R.id.tv,"Title $item")
-                holder.itemView.setBackgroundColor(Color.argb(255, Random().nextInt(255),Random().nextInt(255),Random().nextInt(255)))
+        rv.sliver {
+            datas = list
+            item<String>{
+                layoutManager = LinearLayoutManager(this@HeaderAndFootActivity)
+                layoutId = R.layout.item_single_type
+                itemContent = { item, _, holder->
+                    holder.setText(R.id.tv,"Title $item")
+                    holder.itemView.setBackgroundColor(Color.argb(255, Random().nextInt(255),Random().nextInt(255),Random().nextInt(255)))
+                }
             }
             //关健代码
             val textView = TextView(this@HeaderAndFootActivity)

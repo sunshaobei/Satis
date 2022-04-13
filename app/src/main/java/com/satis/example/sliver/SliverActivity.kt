@@ -5,10 +5,11 @@ import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.databinding.DataBindingUtil
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.satis.example.R
 import com.satis.example.databinding.ActivitySliverBinding
 import com.satis.sliver.recyclerview.DividerItemDecoration
-import com.satis.sliver.satis
+import com.satis.sliver.sliver
 
 class SliverActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -18,9 +19,14 @@ class SliverActivity : AppCompatActivity() {
             DataBindingUtil.setContentView<ActivitySliverBinding>(this, R.layout.activity_sliver)
         val list = arrayListOf<String>("Single Type","Multi Type","Header Foot Type","Binding")
 
-        binding.rv.satis(list) {
-            singleTypeItem<String>(R.layout.item){ i, p, h->
-                h.setText(R.id.tv,i)
+        binding.rv.sliver {
+            datas = list
+            layoutManager = LinearLayoutManager(this@SliverActivity)
+            item<String> {
+                layoutId = R.layout.item
+                itemContent = { i, p, h ->
+                    h.setText(R.id.tv, i)
+                }
             }
             itemClick = { _,_,position->
                 itemClick(list[position])

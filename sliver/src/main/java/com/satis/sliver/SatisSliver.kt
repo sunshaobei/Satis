@@ -222,4 +222,4 @@ typealias BindingItemClick = (ViewDataBinding,Int,Int)->Unit
 typealias ItemLongClick = (ViewHolder, Int, Int)->Boolean
 typealias BindingItemLongClick = (ViewDataBinding,Int,Int)->Boolean
 typealias SpanSizeCallback = (GridLayoutManager, GridLayoutManager.SpanSizeLookup?, Int) -> Int
-typealias TypeSelector<T> =  (T) -> Boolean
+typealias TypeSelector<T> =  (item:T,position:Int) -> Boolean
