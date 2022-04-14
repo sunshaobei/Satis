@@ -3,6 +3,7 @@ package com.satis.sliver
 import android.view.View
 import androidx.databinding.ViewDataBinding
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.satis.sliver.item.ListTypeBindingItem
 import com.satis.sliver.item.ListTypeItem
@@ -12,8 +13,8 @@ import com.satis.sliver.recyclerview.wrapper.LoadMoreState
 import com.satis.sliver.recyclerview.wrapper.LoadMoreStateManager
 import java.lang.IllegalArgumentException
 
-class SatisSliver(val recyclerView: RecyclerView) {
-    val adapter = SatisAdapter(recyclerView.context)
+class Sliver(val recyclerView: RecyclerView) {
+    val adapter = SliverAdapter(recyclerView.context)
     var datas: List<Any>? = null
         set(value) {
             adapter.datas = value ?: ArrayList()
@@ -144,12 +145,16 @@ class BindingItemBox<T,K:ViewDataBinding> {
 }
 
 
-fun RecyclerView.sliver(block: SatisSliver.() -> Unit): SatisSliver {
-    val sliver = SatisSliver(this)
+fun RecyclerView.sliver(block: Sliver.() -> Unit): Sliver {
+    val sliver = Sliver(this)
     sliver.block()
     //设置layoutManager
     if (sliver.layoutManager != null){
         layoutManager = sliver.layoutManager
+    }else{
+        if (layoutManager==null){
+            layoutManager = LinearLayoutManager(this.context)
+        }
     }
     //添加分割线
     sliver.divider?.let {
@@ -161,22 +166,22 @@ fun RecyclerView.sliver(block: SatisSliver.() -> Unit): SatisSliver {
 
 
 fun RecyclerView.loadMore(view: View, loadMoreCallback: LoadMoreCallback) {
-    if (adapter is SatisAdapter) {
-        (adapter as SatisAdapter).setLoadMoreView(view)
-        (adapter as SatisAdapter).mLoadMoreCallback = loadMoreCallback
+    if (adapter is SliverAdapter) {
+        (adapter as SliverAdapter).setLoadMoreView(view)
+        (adapter as SliverAdapter).mLoadMoreCallback = loadMoreCallback
     }
 }
 
 fun RecyclerView.loadMore(layoutId: Int, loadMoreCallback: LoadMoreCallback) {
-    if (adapter is SatisAdapter) {
-        (adapter as SatisAdapter).setLoadMoreView(layoutId)
-        (adapter as SatisAdapter).mLoadMoreCallback = loadMoreCallback
+    if (adapter is SliverAdapter) {
+        (adapter as SliverAdapter).setLoadMoreView(layoutId)
+        (adapter as SliverAdapter).mLoadMoreCallback = loadMoreCallback
     }
 }
 
 fun RecyclerView.empty(view: View) {
-    if (adapter is SatisAdapter) {
-        (adapter as SatisAdapter).setEmptyView(view)
+    if (adapter is SliverAdapter) {
+        (adapter as SliverAdapter).setEmptyView(view)
     }
 }
 
@@ -186,29 +191,29 @@ fun RecyclerView.divider(divider: DividerItemDecoration.() -> Unit) {
 }
 
 fun RecyclerView.headerView(view: View, insertAnimate: Boolean = false) {
-    if (adapter is SatisAdapter) {
-        (adapter as SatisAdapter).addHeaderView(view)
+    if (adapter is SliverAdapter) {
+        (adapter as SliverAdapter).addHeaderView(view)
         if (insertAnimate) {
-            (adapter as SatisAdapter).notifyItemInserted((adapter as SatisAdapter).headersCount)
+            (adapter as SliverAdapter).notifyItemInserted((adapter as SliverAdapter).headersCount)
         } else {
-            (adapter as SatisAdapter).notifyDataSetChanged()
+            (adapter as SliverAdapter).notifyDataSetChanged()
         }
     }
 }
 
 fun RecyclerView.footView(view: View, insertAnimate: Boolean = false) {
-    if (adapter is SatisAdapter) {
-        (adapter as SatisAdapter).addFootView(view)
+    if (adapter is SliverAdapter) {
+        (adapter as SliverAdapter).addFootView(view)
         if (insertAnimate) {
-            val adapter1 = (adapter as SatisAdapter)
+            val adapter1 = (adapter as SliverAdapter)
             var itemCount = adapter1.itemCount
             val loadMoreEnable = adapter1.loadMoreEnable()
             if (loadMoreEnable) {
                 itemCount -= 1
             }
-            (adapter as SatisAdapter).notifyItemInserted(itemCount)
+            (adapter as SliverAdapter).notifyItemInserted(itemCount)
         } else {
-            (adapter as SatisAdapter).notifyDataSetChanged()
+            (adapter as SliverAdapter).notifyDataSetChanged()
         }
     }
 }

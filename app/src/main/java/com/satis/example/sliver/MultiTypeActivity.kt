@@ -55,8 +55,8 @@ class MultiTypeActivity : AppCompatActivity() {
                 }
             }
             item<String,ItemMultiType4Binding> {
-                itemContent = { i, p, h ->
-                    h.text =  "type4 -$p"
+                itemContent = { item, position, binding ->
+                    binding.text =  "type4 -$position"
                 }
                 typeSelector = {it,p->
                     it.endsWith("0")||

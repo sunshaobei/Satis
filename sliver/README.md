@@ -38,79 +38,72 @@
 //position 列表位置
 //holder viewhodler
 
-recyclerView.satis(list){	
-    singleTypeItem<String>(R.layout.item){item,position,holder->
-        holder.setText(R.id.tv,item)
+recyclerView.sliver{
+        datas = list
+        layoutManager = LinearLayoutManager(this@MainActivity)
+        item<数据类型>{
+            layoutId = R.layout.item1
+            selector = {item,position->
+                //多类型使用判断 返回true 即表示使用此类型 item
+                retun true
+            }
+            itemContent = { item,position,viewholder->
+                
+            }
+        }
+        
+         item<数据类型>{
+            layoutId = R.layout.item2
+            selector = {item,position->
+                //多类型使用判断 返回true 即表示使用此类型 item
+                retun true
+            }
+            itemContent = { item,position,viewholder->
+                
+            }
+        }
+  			item<数据类型,ViewDataBinding>{
+            selector = {item,position->
+                //多类型使用判断 返回true 即表示使用此类型 item
+                retun true
+            }
+            itemContent = { item,position,binding->
+                
+            }
+        }
     }
-}
 ```
 databinding 使用
-```
-recyclerView.satis(list){	
-    singleTypeItemBinding<Any,ItemBinding>(R.layout.item){item,position,binding->
-       binding.item = item
-    }
-}
-```
-
-
-- 多类型布局
 ```kotlin
-//list 数据集合
-//item 列表item数据
-//position 列表位置
-//holder viewhodler
+recyclerView.satis(list){	
+    item<数据类型,ViewDataBinding>{
+            selector = {item,position->
+                //多类型使用判断 返回true 即表示使用此类型 item
+                retun true
+            }
+            itemContent = { item,position,binding->
+                
+            }
+     }
+}
+```
 
-recyclerView.satis(list){	
-   selector = { item, position ->
-        if(...){
-            R.layout.item_multi_type1
-        }else if(...){
-             R.layout.item_multi_type2
-        }
-    }
-    multiTypeItems<String>(R.layout.item_multi_type1) {item,position,holder ->
-         h.setText(R.id.tv, "type1 -$position")
-    }
-     multiTypeItems<String>(R.layout.item_multi_type2) {item, position, holder ->
-         h.setText(R.id.tv, "type2 -$position")
-    }
-    // 有多少type 就加多少。
-}
-```
-databinding 使用
-```
-recyclerView.satis(list){	
-   selector = { item, position ->
-        if(...){
-            R.layout.item_multi_type1
-        }else if(...){
-             R.layout.item_multi_type2
-        }
-    }
-    multiTypeItemsBinding<Any,ItemMultiType1Binding>(R.layout.item_multi_type1) {item,position,binding ->
-         binding.data1 = item
-    }
-     multiTypeItemsBinding<Any，ItemMultiType2Binding>(R.layout.item_multi_type2) {item, position, binding ->
-        binding.data2 = item
-    }
-    // 有多少type 就加多少。
-}
-```
+selector 作用在于存在多种类型type 时，根据此判断选择是否采用此类型。
 
 -  databinding xml中使用
+
 ```kotlin
     <androidx.recyclerview.widget.RecyclerView
         ···
-        app:items="@{items}"
-        app:singleTypeItem="@{@layout/R.layout.item_single_type}"
-        app:bindingBR="@{全类名BR ID}"
+        datas="@{items}"
+        layoutId="@{@layout/R.layout.item_single_type}"
+        brStr="@{BR ID}"
     />
 ```
 目前在建议在单类型布局的情况使用 databinding xml 方式(仅上面三行代码搞定),多类型的不建议使用databinding xml 实现（我也没实现相关功能，考虑点在：多类型情况下在xml中实现反而更加复杂，不符合我对简洁代码的期望）
 
 - 其他api
-```
+```kotlin
 recyclerView.satis(list){	
     ...
     layoutManager = ...// 默认为linearLayoutManager
@@ -140,6 +133,3 @@ recyclerView.satis(list){
     }
 }
 ```
-
-- 后续我会在加上刷新逻辑（目前市面上的刷新框架以及自己以前写的都感觉不太合适且各种嵌套破坏结构）
-

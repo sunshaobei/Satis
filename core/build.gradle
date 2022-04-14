@@ -33,7 +33,7 @@ android {
 }
 
 dependencies {
-    implementation project(":viewmodel-core")
+    api "io.github.sunshaobei:satis-viewmodel-core:${POM_VERSION}"
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.4.1'
     implementation 'com.google.android.material:material:1.5.0'
@@ -42,3 +42,5 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 }
+
+apply from: rootProject.file('publish.gradle')

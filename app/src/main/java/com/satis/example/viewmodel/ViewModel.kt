@@ -8,13 +8,8 @@ import com.satis.viewmodel.core.BaseViewModel
 class ViewModel(application: Application) :BaseViewModel(application) {
 
     init {
-        Handler().postDelayed({
-            setValue("onText","eemmme");
-            onText("eenene")
-        }, 1000)
-        Handler().postDelayed({
-            setValue("onText","ssss");
-        }, 3000)
+        onText("eenene")
     }
+
 
 }
