@@ -1,35 +1,32 @@
-### RecyclerView的正确使用姿势
+# Sliver
+[github主页](https://github.com/sunshaobei/Satis)
+[文档](https://sunshaobei.gitbook.io/satis/sliver)
 
-##### 自从事android开发已有五年，一直对android 的适配器模式抱一个怀疑态度，从设计的角度上考虑，确实这样便于扩展，便于高度自定义，但对于绝大多数应用场景的开发人员来说，实际并不友好。
+使用方式
 
-##### 还记的你是怎么使用RecyclerView进行开发的么？
+- 首先在使用模块project gradle 中添加mavencentral() 仓库
 
-1. ###### 小白使用方式（最原始基础的）
+ ```groovy
+    repositories {
+           ...
+           mavenCentral()
+       }
+   ```
+- 然后在使用模块module gradle 中添加
+ 
+```kotlin	
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+}
+dependencies {
+   ...
+    implementation "io.github.sunshaobei:satis-sliver:1.0.1"
+}
+
+
 ```
- class MyAdapter:RecyclerView.Adapter<RecyclerView.ViewHolder>(){
-         override fun onCreateViewHolder...
-         override fun onBindViewHolder...
-         //等等复写一些方法
- }
-  
-```
-2. ###### 稍微有想法点的(创建一个通用类型的adapter，通用的ViewHolder)
-```
- abstract class CommonAdapter:RecyclerView.Adapter<ViewHolder>(){
-         abstract fun onConvert...
- }
-```
-
-##### 可以说目前市面上大家都是这么做的。but 大家有没有思考过一个问题，虽然已经很好的遵循复用原则，但是还是不可避免的在重复造轮子，需要自定义Adapter继承，实现方法等。
-##### 说说我个人的理解吧！对于普通开发者而言，这样的代码说好听的遵循设计原则，难听点就是捞（写了五六年的代码还是捞），我觉的我们只需要关注布局跟数据绑定。
-
-
-
-##### 正文来了,关注过Compose的小伙伴可能有了解到近年来声明式UI已经体现了在移动开发领域的优越性，无论是性能上还是开发的便捷性上。个人也是被它深深吸引，有过这方法经验后，让我萌发了想要实现一个早就想实现的代码功能。
-
-
-
-#### SatisSliver
 
 - 单类型布局
 ```kotlin
@@ -73,7 +70,7 @@ recyclerView.sliver{
         }
     }
 ```
-databinding 使用
+ databinding 使用
 ```kotlin
 recyclerView.satis(list){	
     item<数据类型,ViewDataBinding>{
@@ -133,3 +130,7 @@ recyclerView.satis(list){
     }
 }
 ```
+## 代码构思架构不易，想做一个体现“好用”开源开发框架，希望各位大佬多多支持，不吝赐教。
+
+求赏。                     有想法欢迎讨论给建议，私信加群
+![71649923704_.pic.jpg](https://upload-images.jianshu.io/upload_images/7974572-db197de39302c151.jpg?imageMogr2/auto-orient/strip%7CimageView2/2/w/720)
