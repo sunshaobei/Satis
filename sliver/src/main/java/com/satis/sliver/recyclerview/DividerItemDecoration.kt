@@ -60,7 +60,7 @@ class DividerItemDecoration : ItemDecoration {
     //分割线下间距
     var paddingBottom = 0
 
-    private lateinit var mRecyclerView: RecyclerView
+    private var mRecyclerView: RecyclerView
 
 
     /**
