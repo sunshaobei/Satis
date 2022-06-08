@@ -109,6 +109,7 @@ ext.arouter = arouter
 
 def okhttp3 = [:]
 okhttp3.runtime = "com.squareup.okhttp3:okhttp:4.9.3"
+okhttp3.logging_interceptor = "com.squareup.okhttp3:logging-interceptor:4.9.3"
 okhttp3.okio = "com.squareup.okio:okio:2.8.0"
 ext.okhttp3 = okhttp3
 

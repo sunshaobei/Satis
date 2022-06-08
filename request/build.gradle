@@ -7,6 +7,8 @@ dependencies {
     implementation androidx.core_ktx
     implementation androidx.appcompat
     implementation google.material
+    implementation okhttp3.logging_interceptor
+    implementation okhttp3.runtime
     testImplementation junit
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'

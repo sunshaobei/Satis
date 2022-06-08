@@ -32,11 +32,11 @@ class Processor : AbstractProcessor() {
         mLogger = processingEnv.messager
         mElementUtils = processingEnv.elementUtils
         mModuleName = processingEnv.options["moduleName"].toString()
-        mLogger!!.printMessage(Diagnostic.Kind.NOTE, mModuleName + "：：：：----init")
+        mLogger!!.printMessage(Diagnostic.Kind.NOTE, "$mModuleName：：：：----init")
     }
 
     override fun process(set: Set<TypeElement>, roundEnvironment: RoundEnvironment): Boolean {
-        mLogger!!.printMessage(Diagnostic.Kind.NOTE, "processing...")
+        mLogger!!.printMessage(Diagnostic.Kind.NOTE, "viewmodel processing...")
         mProxyObserveMap.clear()
         val elementsAnnotatedWith = roundEnvironment.getElementsAnnotatedWith(
             Observe::class.java
