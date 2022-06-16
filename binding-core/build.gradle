@@ -2,7 +2,8 @@ base_plugins(project,false)
 base_android(project,false)
 
 dependencies {
-    api "io.github.sunshaobei:satis-core:${POM_VERSION}"
+//    api "io.github.sunshaobei:satis-core:${POM_VERSION}"
+    implementation project(":core")
     implementation glide.runtime
     kapt glide.kapt
     implementation androidx.core_ktx

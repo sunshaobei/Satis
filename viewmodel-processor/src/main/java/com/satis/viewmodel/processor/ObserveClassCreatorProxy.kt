@@ -8,13 +8,14 @@ import javax.lang.model.element.ExecutableElement
 import javax.lang.model.element.TypeElement
 import javax.lang.model.util.Elements
 import javax.tools.Diagnostic
+import kotlin.math.log
 
 /**
  * Created by ssb
  * date 2020/3/11
  * 创建Java文件代理类
  */
-class ObserveClassCreatorProxy(elementUtils: Elements,val logger:Messager?, val typeElement: TypeElement) {
+class ObserveClassCreatorProxy(elementUtils: Elements,val mLog:Messager?, val typeElement: TypeElement) {
     private val observeClassName: String
     private val mObserveElementMap: MutableMap<Observe, ExecutableElement> = HashMap()
     private val packageName: String
@@ -30,7 +31,7 @@ class ObserveClassCreatorProxy(elementUtils: Elements,val logger:Messager?, val 
      *
      * @return
      */
-    fun generateJavaCode(block:(String,TypeName)->Unit): TypeSpec {
+    fun generateJavaCode(block:(String,String,TypeName)->Unit): TypeSpec {
         val className = ClassName("com.satis.viewmodel.core", "Observer")
         return TypeSpec.classBuilder(observeClassName)
             .addModifiers(KModifier.PUBLIC)
@@ -43,7 +44,7 @@ class ObserveClassCreatorProxy(elementUtils: Elements,val logger:Messager?, val 
      * 加入Method
      * javapoet
      */
-    private fun generateMethods(block: (String,TypeName) -> Unit): FunSpec {
+    private fun generateMethods(block: (String,String,TypeName) -> Unit): FunSpec {
         val host = ClassName.bestGuess(typeElement.qualifiedName.toString())
         val owner = ClassName("androidx.lifecycle", "LifecycleOwner")
         val funSpecBuilder = FunSpec.builder("observe")
@@ -57,14 +58,15 @@ class ObserveClassCreatorProxy(elementUtils: Elements,val logger:Messager?, val 
             val method = value.simpleName.toString()
             val parameters = value.parameters
             val variableElement = parameters[0]!!
+            mLog?.printMessage(Diagnostic.Kind.WARNING,"参数类型----------constantValue:${variableElement.constantValue} - sampleName:${variableElement.simpleName} - type ${variableElement.asType().asTypeName()}")
             val typeName = variableElement.asType().asTypeName().javaToKotlinType()
             var paramTypeString:String
             if (typeName is ParameterizedTypeName){
-                logger?.printMessage(Diagnostic.Kind.NOTE,"typeName----$typeName")
+                mLog?.printMessage(Diagnostic.Kind.WARNING,"typeName----$typeName")
                 val rawType = typeName.rawType
-                logger?.printMessage(Diagnostic.Kind.NOTE,"rawType----$rawType")
+                mLog?.printMessage(Diagnostic.Kind.WARNING,"rawType----$rawType")
                 val typeArguments = typeName.typeArguments
-                logger?.printMessage(Diagnostic.Kind.NOTE,"typeArguments----$typeArguments")
+                mLog?.printMessage(Diagnostic.Kind.WARNING,"typeArguments----$typeArguments")
                 paramTypeString = rawType.toString().replace(".","_")+ if (typeArguments.isNotEmpty()){
                     "_${typeArguments[0].toString().replace(".","_").replace(" ","_").trim()}"
                 }else{""}
@@ -74,7 +76,14 @@ class ObserveClassCreatorProxy(elementUtils: Elements,val logger:Messager?, val 
                 paramTypeString = method+count
             }
 
-            block.invoke(method,typeName)
+            var observeTag = observe.tag
+            if (observeTag.isEmpty()){
+                observeTag = "${method}(${typeName.toString().replace(" ","_")})"
+            }
+
+            //生成方法扩展
+            block.invoke(method,observeTag,typeName)
+
             funSpecBuilder.beginControlFlow(
                 "val ${method}_${paramTypeString} = object:%T<%T>",
                 observer,
@@ -85,7 +94,7 @@ class ObserveClassCreatorProxy(elementUtils: Elements,val logger:Messager?, val 
                 .endControlFlow()
                 .endControlFlow()
             funSpecBuilder.addStatement(
-                "(host as %T).viewModel.addObserver(host,\"${method}_${typeName.toString().replace(" ","_")}\" ," + " %T(${method}_${paramTypeString})," + observe.isSticky + ")",
+                "(host as %T).viewModel.addObserver(host,\"$observeTag\" , %T(${method}_${paramTypeString}),${observe.isSticky})",
                 host,
                 baseObserver
             )
@@ -105,5 +114,6 @@ class ObserveClassCreatorProxy(elementUtils: Elements,val logger:Messager?, val 
 
     class Observe(observe:com.satis.viewmodel.annotation.Observe){
         var isSticky = observe.sticky
+        var tag = observe.tag
     }
 }

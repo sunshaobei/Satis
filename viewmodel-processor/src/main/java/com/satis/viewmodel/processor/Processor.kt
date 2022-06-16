@@ -64,8 +64,8 @@ class Processor : AbstractProcessor() {
                 //以activity命名的枚举
                 observeStoreCreatorProxy.put(proxyInfo!!.typeElement)
                 //生成observe 文件
-                val typeSpec = proxyInfo.generateJavaCode{methodName,paramType->
-                    createKtx.addFun(proxyInfo.typeElement,methodName,paramType)
+                val typeSpec = proxyInfo.generateJavaCode{methodName,tag,paramType->
+                    createKtx.addFun(proxyInfo.typeElement,methodName,tag,paramType)
                 }
                 val fileSpec = FileSpec.builder(
                     getPackagePath(proxyInfo.typeElement), typeSpec.name!!)

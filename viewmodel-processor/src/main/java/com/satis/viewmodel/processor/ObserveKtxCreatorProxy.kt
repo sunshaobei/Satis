@@ -14,7 +14,7 @@ import javax.tools.Diagnostic
 class ObserveKtxCreatorProxy(val log: Messager, val processingEnv: ProcessingEnvironment) {
     val typeSpec = TypeSpec.objectBuilder("ObserveKtx")
     private val funDataList = ArrayList<FunData>()
-    fun addFun(typeElement: TypeElement, methodName: String, paramType: TypeName) {
+    fun addFun(typeElement: TypeElement, methodName: String,tag:String, paramType: TypeName) {
         var typeMirror:TypeMirror? = null
         var declaredType:DeclaredType
         var superTypeElement = typeElement
@@ -87,23 +87,24 @@ class ObserveKtxCreatorProxy(val log: Messager, val processingEnv: ProcessingEnv
 
         if (typeMirror!=null){
             funDataList.forEach {
-                if (it.methodName == methodName && it.paramType == paramType && it.receiverType == typeMirror) {
+                if (it.methodName == typeElement.simpleName.toString()+"_"+methodName && it.paramType == paramType && it.receiverType == typeMirror) {
                     return
                 }
             }
-            funDataList.add(FunData(methodName, paramType,typeMirror))
-            val funSpec = FunSpec.builder(methodName)
+            funDataList.add(FunData(typeElement.simpleName.toString()+"_"+ methodName, paramType,typeMirror))
+
+            val funSpec = FunSpec.builder(typeElement.simpleName.toString()+"_"+methodName)
             funSpec.addModifiers(KModifier.INLINE)
             funSpec.receiver(typeMirror.asTypeName())
             funSpec.addParameter("arg", paramType)
-            funSpec.addCode("setValue(\"${methodName}_${paramType.toString().replace(" ","_")}\",arg)")
+            funSpec.addCode("setValue(\"$tag\",arg)")
             typeSpec.addFunction(funSpec.build())
 
-            val funSpec2 = FunSpec.builder("io$methodName")
+            val funSpec2 = FunSpec.builder(typeElement.simpleName.toString()+"_"+"io$methodName")
             funSpec2.addModifiers(KModifier.INLINE)
             funSpec2.receiver(typeMirror.asTypeName())
             funSpec2.addParameter("arg", paramType)
-            funSpec2.addCode("postValue(\"${methodName}_${paramType.toString().replace(" ","_")}\",arg)")
+            funSpec2.addCode("postValue(\"$tag\",arg)")
             typeSpec.addFunction(funSpec2.build())
         }else{
             log.printMessage(Diagnostic.Kind.ERROR,"建议参考 Sample Demo 使用")

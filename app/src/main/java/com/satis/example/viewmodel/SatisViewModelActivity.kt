@@ -7,7 +7,7 @@ import com.satis.core.component.mvvm.MVVMActivity
 import com.satis.example.R
 import com.satis.example.databinding.ActivitySatisViewModelBinding
 import com.satis.viewmodel.annotation.Observe
-import com.satis.viewmodel.apt.app.ObserveStore_app
+import com.satis.viewmodel.app.ObserveStore_app
 import com.satis.viewmodel.core.SatisViewModel
 
 class SatisViewModelActivity :MVVMActivity<ActivitySatisViewModelBinding,ViewModel>() {

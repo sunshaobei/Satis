@@ -35,7 +35,8 @@ android {
 }
 
 dependencies {
-    api "io.github.sunshaobei:satis-core:${POM_VERSION}"
+//    api "io.github.sunshaobei:satis-core:${POM_VERSION}"
+    implementation project(":core")
     implementation androidx.core_ktx
     implementation androidx.appcompat
     implementation google.material
