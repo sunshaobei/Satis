@@ -32,4 +32,14 @@ open class BaseViewModel(application: Application) : AndroidViewModel(applicatio
         val baseLiveData = mMutableLiveDataMap[tag]
         baseLiveData?.setValue(o)
     }
+
+    @Suppress("UNCHECKED_CAST")
+    fun <T> liveData(key:String):BaseLiveData<T>{
+        var baseLiveData = mMutableLiveDataMap[key]
+        if (baseLiveData == null){
+            baseLiveData = BaseLiveData<T>() as BaseLiveData<Any?>
+            mMutableLiveDataMap[key] = baseLiveData
+        }
+        return baseLiveData as BaseLiveData<T>
+    }
 }

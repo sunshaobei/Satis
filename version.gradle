@@ -9,10 +9,11 @@ versions.androidx_support_dynamic_animation = '1.0.0'
 versions.androidx_legacy_support_v4 ='1.0.0'
 versions.androidx_multidex = '2.0.1'
 versions.coroutines = '1.5.1'
-versions.lifecycle = '2.3.1'
+versions.lifecycle = '2.4.1'
 versions.arouter = '1.5.2'
 versions.retrofit = '2.9.0'
 versions.google_gson = '2.8.9'
+versions.glide = '4.13.0'
 ext.versions = versions
 
 
@@ -120,6 +121,13 @@ retrofit.mock = "com.squareup.retrofit2:retrofit-mock:$versions.retrofit"
 retrofit.scalars =  "com.squareup.retrofit2:converter-scalars:$versions.retrofit"
 retrofit.rxjava =  "com.squareup.retrofit2:adapter-rxjava:$versions.retrofit"
 ext.retrofit = retrofit
+
+
+def glide = [:]
+glide.runtime = "com.github.bumptech.glide:glide:$versions.glide"
+glide.kapt = "com.github.bumptech.glide:compiler:$versions.glide"
+ext.glide = glide
+
 
 /**
  * 强制依赖版本，避免版本冲突

@@ -1,46 +1,26 @@
-plugins {
-    id 'com.android.library'
-    id 'kotlin-android'
-}
-
-android {
-    compileSdk 32
-
-    defaultConfig {
-        minSdk 21
-        targetSdk 32
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        consumerProguardFiles "consumer-rules.pro"
-    }
-
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-    }
-
-    dataBinding{
-        enabled = true
-    }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-    kotlinOptions {
-        jvmTarget = '1.8'
-    }
-}
+base_plugins(project,false)
+base_android(project,false)
 
 dependencies {
-    api "io.github.sunshaobei:satis-viewmodel-core:${POM_VERSION}"
+//    api "io.github.sunshaobei:satis-viewmodel-core:${POM_VERSION}"
+    api project(":viewmodel-core")
     implementation androidx.core_ktx
     implementation androidx.appcompat
     implementation google.material
     implementation androidx.multidex
-    testImplementation 'junit:junit:4.+'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    implementation 'androidx.compose.ui:ui:1.1.1'
+    // Tooling support (Previews, etc.)
+    implementation 'androidx.compose.ui:ui-tooling:1.1.1'
+    // Foundation (Border, Background, Box, Image, Scroll, shapes, animations, etc.)
+    implementation 'androidx.compose.foundation:foundation:1.1.1'
+    // Material Design
+    implementation 'androidx.compose.material:material:1.1.1'
+    // Integration with activities
+    implementation 'androidx.activity:activity-compose:1.3.1'
+    // Integration with ViewModels
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.4.1'
+    // Integration with observables
+    implementation 'androidx.compose.runtime:runtime-livedata:1.1.1'
 }
 
 apply from: rootProject.file('publish.gradle')

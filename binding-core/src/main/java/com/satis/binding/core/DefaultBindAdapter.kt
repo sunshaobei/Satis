@@ -6,19 +6,20 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
+import com.bumptech.glide.Glide
 import com.satis.binding.core.factory.GradientDrawableFactory
-import kotlin.jvm.JvmOverloads
 import com.satis.binding.core.factory.StateListDrawableFactory
 import com.satis.core.utils.SizeUtil.dp2px
 
 object DefaultBindAdapter {
     @BindingAdapter(value = ["imageUrl", "placeDrawableId", "errorDrawableId"])
     fun setImageUrl(
-        imageView: ImageView?,
+        imageView: ImageView,
         imageUrl: String?,
         placeDrawableId: Int,
         errorDrawableId: Int
     ) {
+        Glide.with(imageView.context).load(imageUrl).placeholder(placeDrawableId).error(errorDrawableId).into(imageView)
     }
 
     /**
