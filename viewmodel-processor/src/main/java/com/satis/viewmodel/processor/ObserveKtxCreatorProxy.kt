@@ -11,7 +11,7 @@ import javax.tools.Diagnostic
 /**
  * Created by sunshaobei on 2022/3/7.
  */
-class ObserveKtxCreatorProxy(val mLog: Messager, val processingEnv: ProcessingEnvironment) {
+class ObserveKtxCreatorProxy(val log: Messager, val processingEnv: ProcessingEnvironment) {
     val typeSpec = TypeSpec.objectBuilder("ObserveKtx")
     private val funDataList = ArrayList<FunData>()
     fun addFun(typeElement: TypeElement, methodName: String, paramType: TypeName) {
@@ -22,16 +22,30 @@ class ObserveKtxCreatorProxy(val mLog: Messager, val processingEnv: ProcessingEn
             declaredType = superTypeElement.superclass as DeclaredType
             if (declaredType.toString().startsWith("com.satis.core.component.mvvm.MVVMActivity")){
                 typeMirror = declaredType.typeArguments[1]
-                mLog.printMessage(Diagnostic.Kind.WARNING, "提示：找到脚手架-$declaredType")
+                log.printMessage(Diagnostic.Kind.WARNING, "提示：找到脚手架-${superTypeElement.simpleName} ---$declaredType")
                 break
             }
             if (declaredType.toString().startsWith("com.satis.core.component.mvm.MVMActivity")){
                 typeMirror = declaredType.typeArguments[0]
-                mLog.printMessage(Diagnostic.Kind.WARNING,"提示：找到脚手架-$declaredType")
+                log.printMessage(Diagnostic.Kind.WARNING,"提示：找到脚手架-${superTypeElement.simpleName} ---$declaredType")
+                break
+            }
+            if (declaredType.toString().startsWith("com.satis.core.component.mvvm.MVVMFragment")){
+                typeMirror = declaredType.typeArguments[1]
+                log.printMessage(Diagnostic.Kind.WARNING, "提示：找到脚手架-${superTypeElement.simpleName}---$declaredType")
+                break
+            }
+            if (declaredType.toString().startsWith("com.satis.core.component.mvm.MVMFragment")){
+                typeMirror = declaredType.typeArguments[0]
+                log.printMessage(Diagnostic.Kind.WARNING,"提示：找到脚手架-${superTypeElement.simpleName} ---$declaredType")
                 break
             }
             if (declaredType.toString().startsWith("androidx.appcompat.app.AppCompatActivity")){
-                mLog.printMessage(Diagnostic.Kind.WARNING,"提示：非继承 MVMActivity、MVVMActivity")
+                log.printMessage(Diagnostic.Kind.WARNING,"提示：非继承 MVMActivity、MVVMActivity")
+                break
+            }
+            if (declaredType.toString().startsWith("androidx.fragment.app.Fragment")){
+                log.printMessage(Diagnostic.Kind.WARNING,"提示：非继承 MVMFragment、MVVMFragment")
                 break
             }
             superTypeElement = declaredType.asElement() as TypeElement
@@ -47,13 +61,13 @@ class ObserveKtxCreatorProxy(val mLog: Messager, val processingEnv: ProcessingEn
                     if (interfaceItem is DeclaredType) {
                         if (interfaceItem.toString().startsWith("com.satis.core.component.mvm.MVM")) {
                             typeMirror = interfaceItem.typeArguments[0] as TypeMirror
-                            mLog.printMessage(Diagnostic.Kind.WARNING, "提示：找到脚手架-$interfaceItem")
+                            log.printMessage(Diagnostic.Kind.WARNING, "提示：找到脚手架-$interfaceItem")
                             needBreak = true
                             break
                         }
                         if (interfaceItem.toString().startsWith("com.satis.core.component.mvvm.MVVM")) {
                             typeMirror = interfaceItem.typeArguments[1] as TypeMirror
-                            mLog.printMessage(Diagnostic.Kind.WARNING, "提示：找到脚手架-$interfaceItem")
+                            log.printMessage(Diagnostic.Kind.WARNING, "提示：找到脚手架-$interfaceItem")
                             needBreak = true
                             break
                         }
@@ -63,7 +77,7 @@ class ObserveKtxCreatorProxy(val mLog: Messager, val processingEnv: ProcessingEn
                     break
                 }
                 if (interfaceDeclaredType.toString().startsWith("androidx.appcompat.app.AppCompatActivity")){
-                    mLog.printMessage(Diagnostic.Kind.ERROR,"并未实现 MVM、MVVM")
+                    log.printMessage(Diagnostic.Kind.ERROR,"并未实现 MVM、MVVM")
                     break
                 }
                 interfaceTypeElement = declaredType.asElement() as TypeElement
@@ -92,7 +106,7 @@ class ObserveKtxCreatorProxy(val mLog: Messager, val processingEnv: ProcessingEn
             funSpec2.addCode("postValue(\"${methodName}_${paramType.toString().replace(" ","_")}\",arg)")
             typeSpec.addFunction(funSpec2.build())
         }else{
-            mLog.printMessage(Diagnostic.Kind.ERROR,"建议参考 Sample Demo 使用")
+            log.printMessage(Diagnostic.Kind.ERROR,"建议参考 Sample Demo 使用")
         }
     }
 }
