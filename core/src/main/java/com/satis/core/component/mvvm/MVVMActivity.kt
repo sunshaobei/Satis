@@ -13,7 +13,6 @@ abstract class MVVMActivity<T : ViewDataBinding, K : BaseViewModel> : FrameworkA
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        initTarget(this)
         super.setContentView(binding.root)
     }
 

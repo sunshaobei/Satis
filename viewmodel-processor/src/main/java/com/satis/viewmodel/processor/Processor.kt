@@ -55,7 +55,7 @@ class Processor : AbstractProcessor() {
         }
         //通过javapoet生成
 
-        val createKtx = ObserveKtxCreatorProxy(processingEnv)
+        val createKtx = ObserveKtxCreatorProxy(mLogger!!,processingEnv)
         val observeStoreCreatorProxy = ObserveStoreCreatorProxy(mModuleName)
         for (key in mProxyObserveMap.keys) {
             try {
@@ -105,6 +105,6 @@ class Processor : AbstractProcessor() {
     }
 
     companion object {
-        var APT_PACKAGE = "com.satis.viewmodel.apt"
+        var APT_PACKAGE = "com.satis.viewmodel"
     }
 }

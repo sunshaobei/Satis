@@ -1,34 +1,83 @@
 package com.satis.viewmodel.processor
 
-import com.satis.viewmodel.processor.utils.javaToKotlinType
 import com.squareup.kotlinpoet.*
+import javax.annotation.processing.Messager
 import javax.annotation.processing.ProcessingEnvironment
 import javax.lang.model.element.TypeElement
 import javax.lang.model.type.DeclaredType
+import javax.lang.model.type.TypeMirror
+import javax.tools.Diagnostic
 
 /**
  * Created by sunshaobei on 2022/3/7.
  */
-class ObserveKtxCreatorProxy(processingEnv: ProcessingEnvironment) {
-    val types = processingEnv.typeUtils
+class ObserveKtxCreatorProxy(val mLog: Messager, val processingEnv: ProcessingEnvironment) {
     val typeSpec = TypeSpec.objectBuilder("ObserveKtx")
     private val funDataList = ArrayList<FunData>()
     fun addFun(typeElement: TypeElement, methodName: String, paramType: TypeName) {
-        funDataList.forEach {
-            if (it.methodName == methodName && it.paramType == paramType) {
-                return
+        var typeMirror:TypeMirror? = null
+        var declaredType:DeclaredType
+        var superTypeElement = typeElement
+        while (true){
+            declaredType = superTypeElement.superclass as DeclaredType
+            if (declaredType.toString().startsWith("com.satis.core.component.mvvm.MVVMActivity")){
+                typeMirror = declaredType.typeArguments[1]
+                mLog.printMessage(Diagnostic.Kind.WARNING, "提示：找到脚手架-$declaredType")
+                break
+            }
+            if (declaredType.toString().startsWith("com.satis.core.component.mvm.MVMActivity")){
+                typeMirror = declaredType.typeArguments[0]
+                mLog.printMessage(Diagnostic.Kind.WARNING,"提示：找到脚手架-$declaredType")
+                break
+            }
+            if (declaredType.toString().startsWith("androidx.appcompat.app.AppCompatActivity")){
+                mLog.printMessage(Diagnostic.Kind.WARNING,"提示：非继承 MVMActivity、MVVMActivity")
+                break
+            }
+            superTypeElement = declaredType.asElement() as TypeElement
+        }
+        if (typeMirror==null){
+            var interfaces:List<out TypeMirror>? = null
+            var interfaceDeclaredType = typeElement.superclass as DeclaredType
+            var interfaceTypeElement = typeElement
+            var needBreak = false
+            while (true){
+                interfaces = interfaceTypeElement.interfaces
+                for(interfaceItem in interfaces){
+                    if (interfaceItem is DeclaredType) {
+                        if (interfaceItem.toString().startsWith("com.satis.core.component.mvm.MVM")) {
+                            typeMirror = interfaceItem.typeArguments[0] as TypeMirror
+                            mLog.printMessage(Diagnostic.Kind.WARNING, "提示：找到脚手架-$interfaceItem")
+                            needBreak = true
+                            break
+                        }
+                        if (interfaceItem.toString().startsWith("com.satis.core.component.mvvm.MVVM")) {
+                            typeMirror = interfaceItem.typeArguments[1] as TypeMirror
+                            mLog.printMessage(Diagnostic.Kind.WARNING, "提示：找到脚手架-$interfaceItem")
+                            needBreak = true
+                            break
+                        }
+                    }
+                }
+                if (needBreak){
+                    break
+                }
+                if (interfaceDeclaredType.toString().startsWith("androidx.appcompat.app.AppCompatActivity")){
+                    mLog.printMessage(Diagnostic.Kind.ERROR,"并未实现 MVM、MVVM")
+                    break
+                }
+                interfaceTypeElement = declaredType.asElement() as TypeElement
+                interfaceDeclaredType = interfaceTypeElement.superclass as DeclaredType
             }
         }
-        funDataList.add(FunData(methodName, paramType))
-        var declaredType = typeElement.superclass as DeclaredType
-        var typeArguments = declaredType.typeArguments
-        while (typeArguments.size != 2) {
-            val superElement = declaredType.asElement() as TypeElement
-            declaredType = superElement.superclass as DeclaredType
-            typeArguments = declaredType.typeArguments
-        }
-        if (typeArguments.size == 2){
-            val typeMirror = typeArguments[1]
+
+        if (typeMirror!=null){
+            funDataList.forEach {
+                if (it.methodName == methodName && it.paramType == paramType && it.receiverType == typeMirror) {
+                    return
+                }
+            }
+            funDataList.add(FunData(methodName, paramType,typeMirror))
             val funSpec = FunSpec.builder(methodName)
             funSpec.addModifiers(KModifier.INLINE)
             funSpec.receiver(typeMirror.asTypeName())
@@ -42,9 +91,11 @@ class ObserveKtxCreatorProxy(processingEnv: ProcessingEnvironment) {
             funSpec2.addParameter("arg", paramType)
             funSpec2.addCode("postValue(\"${methodName}_${paramType.toString().replace(" ","_")}\",arg)")
             typeSpec.addFunction(funSpec2.build())
+        }else{
+            mLog.printMessage(Diagnostic.Kind.ERROR,"建议参考 Sample Demo 使用")
         }
     }
 }
 
-data class FunData(val methodName: String, val paramType: TypeName)
+data class FunData(val methodName: String, val paramType: TypeName,val receiverType:TypeMirror)
 

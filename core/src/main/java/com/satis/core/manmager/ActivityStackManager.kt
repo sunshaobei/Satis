@@ -4,6 +4,8 @@ import android.app.Activity
 import android.app.Application
 import android.os.Bundle
 import androidx.lifecycle.Lifecycle
+import com.satis.core.component.mvm.MVMHelper
+import com.satis.core.component.mvvm.MVVMHelper
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.collections.ArrayList
@@ -14,6 +16,8 @@ class ActivityStackManager private constructor():Application.ActivityLifecycleCa
     override fun onActivityCreated(p0: Activity, p1: Bundle?) {
         mActivities.add(p0)
         mActivitiesStateMap[p0] = Lifecycle.Event.ON_CREATE
+        MVMHelper.checkNeedInit(p0)
+        MVVMHelper.checkNeedInit(p0)
     }
 
     override fun onActivityStarted(p0: Activity) {

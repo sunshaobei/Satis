@@ -12,6 +12,7 @@ import java.lang.reflect.Method
 import java.lang.reflect.ParameterizedType
 
 /**
+ * 初始化 binding、viewModel 辅助
  * Created by sunshaobei on 2022/3/3.
  * MVVM 初始化代理类
  */
@@ -19,14 +20,11 @@ class MVVMDelegate<T : ViewDataBinding, K : AndroidViewModel> : MVVM<T, K> {
     private lateinit var viewModelStoreOwner: ViewModelStoreOwner
     override lateinit var binding: T
     override lateinit var viewModel: K
-    override fun initTarget(viewModelStoreOwner: ViewModelStoreOwner) {
-        this.viewModelStoreOwner = viewModelStoreOwner
-        //初始化 binding 与 viewmodel
-        mvvmInit()
-    }
 
     @Suppress("UNCHECKED_CAST")
-    private fun mvvmInit() {
+    override fun initMVVM(viewModelStoreOwner: ViewModelStoreOwner) {
+        this.viewModelStoreOwner = viewModelStoreOwner
+        //初始化 binding 与 viewmodel
         val type = viewModelStoreOwner.javaClass.genericSuperclass as ParameterizedType
         val actualTypeArguments = type.actualTypeArguments
         // init viewBinding

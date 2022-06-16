@@ -11,5 +11,5 @@ import androidx.lifecycle.ViewModelStoreOwner
 interface MVVM<T : ViewDataBinding, K : AndroidViewModel> {
     var binding :T
     var viewModel:K
-    fun initTarget(viewModelStoreOwner: ViewModelStoreOwner)
+    fun initMVVM(viewModelStoreOwner: ViewModelStoreOwner)
 }
