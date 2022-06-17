@@ -3,6 +3,7 @@ package com.satis.example.viewmodel
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import com.satis.core.component.mvvm.MVVMActivity
 import com.satis.example.R
 import com.satis.example.databinding.ActivitySatisViewModelBinding
@@ -14,12 +15,20 @@ class SatisViewModelActivity :MVVMActivity<ActivitySatisViewModelBinding,ViewMod
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         SatisViewModel.addObserverStore(ObserveStore_app())
-        SatisViewModel.observe(this)
-        startActivity(Intent(this,TestActivity::class.java))
+        viewModel.get()
+        supportFragmentManager.beginTransaction().add(R.id.container,Fragment()).commit()
+    }
+
+    override fun onResume() {
+        super.onResume()
     }
 
     @Observe
     fun onText(s:String){
-        Log.e("sunshaobei",s)
+        Log.e("SatisViewModelActivity", "test$s")
+    }
+
+    fun click(view: View) {
+        startActivity(Intent(this,TestActivity::class.java))
     }
 }

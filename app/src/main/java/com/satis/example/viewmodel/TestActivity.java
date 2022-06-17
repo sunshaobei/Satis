@@ -16,9 +16,11 @@ public class TestActivity extends MVVMActivity<ActivityTestBinding,ViewModel> {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         SatisViewModel.INSTANCE.observe(this);
+        getViewModel().get();
     }
     @Observe
     public void onText(String s){
-        Log.e("sunshaobei","test"+s);
+        Log.e("TestActivity","test"+s);
     }
+
 }

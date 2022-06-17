@@ -31,9 +31,10 @@
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.2515625" />
         <entry key="app/src/main/res/layout/activity_multi_type.xml" value="0.2957427536231884" />
         <entry key="app/src/main/res/layout/activity_over_scroll_test.xml" value="0.2259963768115942" />
-        <entry key="app/src/main/res/layout/activity_satis_view_model.xml" value="0.1171875" />
+        <entry key="app/src/main/res/layout/activity_satis_view_model.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_single_type.xml" value="0.21041666666666667" />
         <entry key="app/src/main/res/layout/activity_test.xml" value="0.1171875" />
+        <entry key="app/src/main/res/layout/fragment_layout.xml" value="0.1" />
         <entry key="app/src/main/res/layout/item.xml" value="0.2957427536231884" />
         <entry key="app/src/main/res/layout/item2.xml" value="0.2515625" />
         <entry key="app/src/main/res/layout/item_binding.xml" value="0.18177083333333333" />

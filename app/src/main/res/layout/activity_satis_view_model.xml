@@ -12,5 +12,20 @@
         android:layout_height="match_parent"
         tools:context=".viewmodel.SatisViewModelActivity">
 
+        <FrameLayout
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+        <TextView
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:text="文字中间点击"
+            app:layout_constraintRight_toRightOf="parent"
+            android:onClick="click"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

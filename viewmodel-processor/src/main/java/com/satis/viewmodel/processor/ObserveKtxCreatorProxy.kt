@@ -87,20 +87,20 @@ class ObserveKtxCreatorProxy(val log: Messager, val processingEnv: ProcessingEnv
 
         if (typeMirror!=null){
             funDataList.forEach {
-                if (it.methodName == typeElement.simpleName.toString()+"_"+methodName && it.paramType == paramType && it.receiverType == typeMirror) {
+                if (it.methodName == methodName && it.paramType == paramType && it.receiverType == typeMirror) {
                     return
                 }
             }
-            funDataList.add(FunData(typeElement.simpleName.toString()+"_"+ methodName, paramType,typeMirror))
+            funDataList.add(FunData(methodName, paramType,typeMirror))
 
-            val funSpec = FunSpec.builder(typeElement.simpleName.toString()+"_"+methodName)
+            val funSpec = FunSpec.builder(methodName)
             funSpec.addModifiers(KModifier.INLINE)
             funSpec.receiver(typeMirror.asTypeName())
             funSpec.addParameter("arg", paramType)
             funSpec.addCode("setValue(\"$tag\",arg)")
             typeSpec.addFunction(funSpec.build())
 
-            val funSpec2 = FunSpec.builder(typeElement.simpleName.toString()+"_"+"io$methodName")
+            val funSpec2 = FunSpec.builder("io$methodName")
             funSpec2.addModifiers(KModifier.INLINE)
             funSpec2.receiver(typeMirror.asTypeName())
             funSpec2.addParameter("arg", paramType)

@@ -25,6 +25,6 @@ abstract class MVVMFragment<T : ViewDataBinding, K : BaseViewModel>  : Framework
     }
 
     open fun viewModeStoreOwner(): ViewModelStoreOwner {
-        return this
+        return requireActivity()
     }
 }
