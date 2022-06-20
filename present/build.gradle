@@ -1,0 +1,15 @@
+base_plugins(project,false)
+base_android(project,false)
+
+dependencies {
+//    api "io.github.sunshaobei:satis-core:${POM_VERSION}"
+    implementation project(":core")
+    implementation glide.runtime
+    kapt glide.kapt
+    implementation androidx.core_ktx
+    implementation androidx.appcompat
+    implementation google.material
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+}
+apply from: rootProject.file('publish.gradle')

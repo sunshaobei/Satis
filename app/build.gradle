@@ -61,6 +61,7 @@ dependencies {
     implementation project(":sliver")
     implementation project(':overscroll')
     implementation project(':viewmodel-core')
+    implementation project(':present')
 //    implementation project(':viewmodel-annotation')
     kapt project(':viewmodel-processor')
 //    implementation 'org.aspectj:aspectjrt:1.9.5'

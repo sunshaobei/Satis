@@ -15,6 +15,7 @@
             <option value="$PROJECT_DIR$/binding-core" />
             <option value="$PROJECT_DIR$/core" />
             <option value="$PROJECT_DIR$/overscroll" />
+            <option value="$PROJECT_DIR$/present" />
             <option value="$PROJECT_DIR$/request" />
             <option value="$PROJECT_DIR$/request-annotation" />
             <option value="$PROJECT_DIR$/request-processor" />

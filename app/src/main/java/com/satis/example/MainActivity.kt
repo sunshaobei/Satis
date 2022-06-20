@@ -7,9 +7,11 @@ import android.os.Bundle
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.satis.example.databinding.ActivityMainBinding
+import com.satis.present.Present
+import com.satis.present.PresentDelegate
 import com.satis.sliver.sliver
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity() ,Present by PresentDelegate(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val binding =
